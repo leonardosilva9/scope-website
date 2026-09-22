@@ -1,0 +1,1816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCOPE — Study smarter. Stress less.</title>
+<meta name="description" content="SCOPE is an evidence-based student success platform helping middle and high schoolers improve academic performance and mental well-being.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+/* ============ TOKENS ============ */
+:root{
+  --paper:#F6F8F6;
+  --paper-alt:#EFF3EF;
+  --card:#FFFFFF;
+  --ink:#182524;
+  --ink-soft:#4C5D5A;
+  --ink-faint:#7C8B87;
+  --brand:#2F6659;
+  --brand-dark:#204A41;
+  --brand-light:#DCEAE4;
+  --accent:#E3A857;
+  --accent-dark:#C98B36;
+  --accent-soft:#FBEBD2;
+  --blue:#6E8FA6;
+  --blue-soft:#E4EDF2;
+  --rust:#A6432A;
+  --rust-soft:#F3E1DB;
+  --line:#DCE3DE;
+  --radius-lg:20px;
+  --radius-md:14px;
+  --radius-sm:9px;
+  --shadow-sm:0 1px 2px rgba(24,37,36,.06);
+  --shadow-md:0 8px 24px rgba(24,37,36,.08);
+  --font-display:'Space Grotesk',ui-sans-serif,sans-serif;
+  --font-body:'Inter',ui-sans-serif,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto;} *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}}
+body{margin:0;font-family:var(--font-body);color:var(--ink);background:var(--paper);line-height:1.55;font-size:16px;-webkit-font-smoothing:antialiased;}
+h1,h2,h3,h4{font-family:var(--font-display);color:var(--ink);margin:0 0 .5em;line-height:1.15;letter-spacing:-0.01em;}
+h1{font-size:clamp(2.1rem,5vw,3.4rem);font-weight:700;}
+h2{font-size:clamp(1.6rem,3.4vw,2.3rem);font-weight:700;}
+h3{font-size:1.25rem;font-weight:600;}
+p{margin:0 0 1em;color:var(--ink-soft);}
+a{color:var(--brand);text-decoration:none;}
+a:hover{text-decoration:underline;}
+button{font-family:inherit;cursor:pointer;}
+img{max-width:100%;display:block;}
+:focus-visible{outline:2.5px solid var(--accent-dark);outline-offset:3px;border-radius:4px;}
+.container{max-width:1140px;margin:0 auto;padding:0 24px;}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono);font-size:.72rem;letter-spacing:.09em;text-transform:uppercase;color:var(--brand);font-weight:600;margin-bottom:14px;}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);display:inline-block;}
+.section{padding:76px 0;}
+.section-tight{padding:48px 0;}
+.section-head{max-width:640px;margin-bottom:40px;}
+.section-head p{font-size:1.05rem;}
+.grid{display:grid;gap:20px;}
+.g-2{grid-template-columns:repeat(2,1fr);}
+.g-3{grid-template-columns:repeat(3,1fr);}
+.g-4{grid-template-columns:repeat(4,1fr);}
+@media(max-width:900px){.g-3,.g-4{grid-template-columns:repeat(2,1fr);} .g-2{grid-template-columns:1fr;}}
+@media(max-width:600px){.g-2,.g-3,.g-4{grid-template-columns:1fr;}}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:.95rem;padding:12px 22px;border-radius:100px;border:1.5px solid transparent;transition:transform .15s ease, box-shadow .15s ease, background .15s ease;}
+.btn:hover{text-decoration:none;transform:translateY(-1px);}
+.btn-primary{background:var(--brand);color:#fff;}
+.btn-primary:hover{background:var(--brand-dark);}
+.btn-accent{background:var(--accent);color:var(--ink);}
+.btn-accent:hover{background:var(--accent-dark);}
+.btn-ghost{background:transparent;border-color:var(--line);color:var(--ink);}
+.btn-ghost:hover{border-color:var(--brand);color:var(--brand);}
+.btn-sm{padding:8px 16px;font-size:.85rem;}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none;}
+
+/* card */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-md);padding:24px;box-shadow:var(--shadow-sm);}
+.card-tool{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-lg);padding:28px;box-shadow:var(--shadow-sm);}
+
+/* ============ CRISIS BAR ============ */
+.crisis-bar{background:var(--brand-dark);color:#fff;text-align:center;font-size:.85rem;padding:9px 16px;}
+.crisis-bar a{color:#fff;text-decoration:underline;font-weight:600;}
+
+/* ============ HEADER / NAV ============ */
+header.site{position:sticky;top:0;z-index:50;background:rgba(246,248,246,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);}
+.nav-row{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;max-width:1140px;margin:0 auto;}
+.logo{display:flex;align-items:center;gap:9px;font-family:var(--font-display);font-weight:700;font-size:1.3rem;color:var(--ink);}
+.logo .ring{width:26px;height:26px;}
+nav.primary{display:flex;gap:4px;align-items:center;}
+nav.primary a{padding:8px 13px;border-radius:100px;font-weight:500;font-size:.92rem;color:var(--ink-soft);}
+nav.primary a:hover,nav.primary a.active{background:var(--brand-light);color:var(--brand-dark);text-decoration:none;}
+.nav-actions{display:flex;gap:10px;align-items:center;}
+.menu-toggle{display:none;background:none;border:none;padding:8px;}
+@media(max-width:920px){
+  nav.primary{display:none;position:absolute;top:64px;left:0;right:0;background:var(--paper);flex-direction:column;align-items:stretch;padding:10px 24px 18px;border-bottom:1px solid var(--line);gap:2px;}
+  nav.primary.open{display:flex;}
+  nav.primary a{padding:12px 14px;}
+  .menu-toggle{display:block;}
+  .nav-actions .btn-ghost{display:none;}
+}
+
+/* ============ ROUTER VIEWS ============ */
+.view{display:none;}
+.view.active{display:block;animation:fadein .35s ease;}
+@keyframes fadein{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+
+/* ============ HERO ============ */
+.hero{padding:64px 0 40px;}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;}
+@media(max-width:880px){.hero-grid{grid-template-columns:1fr;}}
+.hero h1{margin-bottom:18px;}
+.hero .lede{font-size:1.15rem;max-width:480px;}
+.hero-ctas{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap;}
+
+/* focus ring visual (signature element) */
+.ring-wrap{position:relative;width:100%;max-width:340px;margin:0 auto;aspect-ratio:1/1;}
+.ring-wrap svg{width:100%;height:100%;transform:rotate(-90deg);}
+.ring-wrap circle.track{stroke:var(--brand-light);}
+.ring-wrap circle.progress{stroke:var(--accent);stroke-linecap:round;transition:stroke-dashoffset 1s linear;}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
+.ring-center .time{font-family:var(--font-mono);font-size:2.3rem;font-weight:600;color:var(--ink);}
+.ring-center .label{font-size:.82rem;color:var(--ink-faint);margin-top:4px;}
+.ring-mini-cta{margin-top:16px;text-align:center;}
+
+/* problem-first tiles */
+.problem-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin:28px 0 8px;}
+@media(max-width:700px){.problem-grid{grid-template-columns:1fr;}}
+.problem-tile{display:flex;align-items:center;justify-content:space-between;gap:14px;text-align:left;width:100%;padding:20px 22px;border-radius:var(--radius-md);border:1.5px solid var(--line);background:var(--card);font-family:var(--font-body);transition:border-color .15s,transform .15s,box-shadow .15s;}
+.problem-tile:hover{border-color:var(--brand);transform:translateY(-2px);box-shadow:var(--shadow-md);text-decoration:none;}
+.problem-tile .txt{font-weight:600;font-size:1.05rem;color:var(--ink);}
+.problem-tile .sub{display:block;font-weight:400;font-size:.82rem;color:var(--ink-faint);margin-top:3px;}
+.problem-tile .arrow{color:var(--brand);font-size:1.2rem;flex-shrink:0;}
+.problem-tile.urgent{background:var(--rust-soft);border-color:#E3C3B7;grid-column:1/-1;}
+.problem-tile.urgent .txt{color:var(--rust);}
+.problem-tile.urgent .arrow{color:var(--rust);}
+
+/* floating persistent crisis help */
+.floating-help{position:fixed;right:18px;bottom:18px;z-index:60;display:flex;align-items:center;gap:8px;background:var(--rust);color:#fff;font-weight:600;font-size:.85rem;padding:12px 18px;border-radius:100px;box-shadow:0 6px 20px rgba(166,67,42,.35);}
+.floating-help:hover{background:#8f3a24;color:#fff;text-decoration:none;}
+.dot-pulse{width:8px;height:8px;border-radius:50%;background:#fff;animation:pulse 1.8s ease infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+@media(max-width:600px){.floating-help{right:12px;bottom:12px;padding:11px 16px;font-size:.8rem;}}
+
+/* continuity bands */
+.nudge-band{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;background:var(--paper-alt);border:1px solid var(--line);border-radius:var(--radius-md);padding:16px 20px;margin-top:18px;}
+.nudge-band .lbl{font-size:.78rem;color:var(--ink-faint);font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;}
+.nudge-band .val{font-weight:600;color:var(--ink);}
+
+/* class stress navigator */
+.csn-progress{display:flex;gap:6px;margin-bottom:24px;}
+.csn-progress .dot{height:5px;flex:1;border-radius:4px;background:var(--line);}
+.csn-progress .dot.done{background:var(--brand);}
+.csn-progress .dot.current{background:var(--accent);}
+.csn-options{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+@media(max-width:600px){.csn-options{grid-template-columns:1fr;}}
+.csn-option{padding:16px 18px;border-radius:var(--radius-md);border:1.5px solid var(--line);background:var(--card);font-weight:600;font-size:.95rem;text-align:left;transition:border-color .15s,transform .15s;}
+.csn-option:hover{border-color:var(--brand);transform:translateY(-1px);}
+.csn-option.selected{border-color:var(--brand);background:var(--brand-light);}
+.csn-toggle-row{display:flex;align-items:center;gap:10px;margin-top:16px;padding:12px 16px;border-radius:var(--radius-sm);background:var(--paper-alt);}
+.csn-result-block{padding:18px 20px;border-radius:var(--radius-md);margin-bottom:14px;}
+.csn-result-block h4{margin:0 0 8px;font-size:.85rem;text-transform:uppercase;letter-spacing:.04em;font-family:var(--font-mono);}
+.csn-result-block ul{margin:0;padding-left:18px;}
+.csn-result-block li{margin-bottom:6px;color:var(--ink-soft);}
+
+/* toolkit */
+.toolkit-card{padding:22px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;height:100%;}
+.toolkit-card h3{margin-bottom:6px;font-size:1.05rem;}
+.toolkit-card .best-for{font-size:.8rem;color:var(--ink-faint);margin:8px 0 14px;}
+.toolkit-card .best-for strong{color:var(--ink-soft);}
+
+.ring-bullet{display:inline-block;width:8px;height:8px;border-radius:50%;border:2px solid var(--accent);margin-right:9px;flex-shrink:0;}
+
+
+/* tool quick grid on home */
+.tool-chip{display:flex;align-items:center;gap:12px;padding:16px 18px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--card);transition:border-color .15s, transform .15s;}
+.tool-chip:hover{border-color:var(--brand);transform:translateY(-2px);text-decoration:none;}
+.tool-chip .ic{width:38px;height:38px;border-radius:50%;background:var(--brand-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--brand-dark);font-family:var(--font-mono);font-weight:700;}
+.tool-chip .tt{font-weight:600;color:var(--ink);font-size:.94rem;}
+.tool-chip .ds{font-size:.78rem;color:var(--ink-faint);}
+
+/* category cards */
+.cat-card{padding:22px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--card);cursor:pointer;transition:box-shadow .15s, transform .15s;}
+button.cat-card{display:block;width:100%;text-align:left;font:inherit;color:inherit;}
+.cat-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.cat-card .tag{display:inline-block;font-family:var(--font-mono);font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--brand);background:var(--brand-light);padding:3px 9px;border-radius:100px;margin-bottom:10px;}
+.cat-card h3{margin-bottom:6px;font-size:1.08rem;}
+.cat-card p{font-size:.88rem;margin-bottom:0;}
+
+/* crisis band */
+.crisis-band{background:var(--rust-soft);border:1px solid #E3C3B7;border-radius:var(--radius-lg);padding:30px;display:flex;gap:22px;align-items:flex-start;}
+.crisis-band .ic{width:44px;height:44px;border-radius:50%;background:var(--rust);color:#fff;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-weight:700;flex-shrink:0;}
+.crisis-band h3{color:var(--rust);}
+
+/* footer */
+footer.site{background:var(--brand-dark);color:#EAF1EE;margin-top:60px;}
+footer.site .container{padding:52px 24px 30px;}
+.footer-grid{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:28px;}
+@media(max-width:800px){.footer-grid{grid-template-columns:repeat(2,1fr);}}
+footer.site h4{color:#fff;font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;font-family:var(--font-mono);margin-bottom:14px;}
+footer.site a{color:#CBDDD6;font-size:.9rem;display:block;margin-bottom:9px;}
+footer.site a:hover{color:#fff;}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.15);margin-top:34px;padding-top:20px;font-size:.78rem;color:#A9C3BA;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+
+/* forms */
+label{display:block;font-size:.85rem;font-weight:600;margin-bottom:6px;color:var(--ink);}
+input[type=text],input[type=email],input[type=date],input[type=time],select,textarea{width:100%;padding:11px 13px;border-radius:var(--radius-sm);border:1.5px solid var(--line);font-family:inherit;font-size:.95rem;background:#fff;color:var(--ink);}
+input:focus,select:focus,textarea:focus{border-color:var(--brand);}
+.field{margin-bottom:16px;}
+.inline-fields{display:flex;gap:12px;flex-wrap:wrap;}
+.inline-fields>*{flex:1;min-width:160px;}
+
+/* tabs */
+.tabbar{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-bottom:28px;padding-bottom:0;}
+.tabbar button{background:none;border:none;padding:11px 16px;font-weight:600;font-size:.92rem;color:var(--ink-faint);border-bottom:2.5px solid transparent;margin-bottom:-1px;}
+.tabbar button.active{color:var(--brand-dark);border-color:var(--accent);}
+.tabpane{display:none;}
+.tabpane.active{display:block;animation:fadein .3s ease;}
+
+/* badges/pills */
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:600;padding:5px 12px;border-radius:100px;background:var(--paper-alt);border:1px solid var(--line);color:var(--ink-soft);cursor:pointer;}
+.pill.active{background:var(--brand);color:#fff;border-color:var(--brand);}
+
+.divider{height:1px;background:var(--line);margin:44px 0;border:none;}
+.muted{color:var(--ink-faint);font-size:.85rem;}
+.center{text-align:center;}
+.stack-sm>*+*{margin-top:10px;}
+
+/* feedback widget */
+.feedback-box{margin-top:26px;padding:18px 20px;border-radius:var(--radius-md);background:var(--paper-alt);border:1px solid var(--line);}
+.feedback-box .yn{display:flex;gap:10px;margin-top:10px;}
+.feedback-thanks{display:none;color:var(--brand-dark);font-weight:600;font-size:.9rem;}
+
+/* skip link */
+.skip-link{position:absolute;left:-999px;top:0;background:var(--brand);color:#fff;padding:10px 16px;border-radius:0 0 8px 0;z-index:100;}
+.skip-link:focus{left:0;}
+
+/* lang toggle */
+.lang-toggle{display:inline-flex;border:1px solid var(--line);border-radius:100px;overflow:hidden;}
+.lang-toggle button{padding:8px 16px;border:none;background:#fff;font-weight:600;font-size:.85rem;color:var(--ink-faint);}
+.lang-toggle button.active{background:var(--brand);color:#fff;}
+[data-lang-block]{display:none;}
+[data-lang-block].active{display:block;}
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<div class="crisis-bar">In danger or in crisis right now? <a href="#crisis" onclick="go('crisis')">Get immediate help →</a> — SCOPE is not an emergency service.</div>
+
+<header class="site">
+  <div class="nav-row">
+    <a href="#home" class="logo" onclick="go('home')" aria-label="SCOPE home">
+      <svg class="ring" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10" fill="none" stroke="#DCEAE4" stroke-width="3"/><circle cx="13" cy="13" r="10" fill="none" stroke="#E3A857" stroke-width="3" stroke-linecap="round" stroke-dasharray="63" stroke-dashoffset="18" transform="rotate(-90 13 13)"/></svg>
+      SCOPE
+    </a>
+    <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M3 6h18M3 12h18M3 18h18" stroke="#182524" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <nav class="primary" id="primaryNav">
+      <a href="#home" onclick="go('home')" data-route="home">Home</a>
+      <a href="#resources" onclick="go('resources')" data-route="resources">Resources</a>
+      <a href="#study-tools" onclick="go('study-tools')" data-route="study-tools">Tools</a>
+      <a href="#toolkit" onclick="go('toolkit')" data-route="toolkit">Toolkit</a>
+      <a href="#parents" onclick="go('parents')" data-route="parents">Parents &amp; Schools</a>
+    </nav>
+    <div class="nav-actions">
+      <a href="#crisis" onclick="go('crisis')" class="btn btn-sm" style="background:var(--rust);color:#fff;">Crisis help</a>
+    </div>
+  </div>
+</header>
+
+<a href="#crisis" onclick="go('crisis')" class="floating-help" aria-label="Get crisis help now">
+  <span class="dot-pulse"></span> Get help now
+</a>
+
+<main id="main">
+<!-- ===================== HOME ===================== -->
+<section class="view active" id="view-home">
+  <div class="hero container" style="padding-bottom:8px;">
+    <div class="eyebrow"><span class="dot"></span> SCOPE</div>
+    <h1 style="max-width:640px;">What do you need help with right now?</h1>
+    <p class="lede" style="max-width:560px;font-size:1.05rem;">Tap what's true. You'll get the one thing that helps — not a list to sort through.</p>
+  </div>
+
+  <div class="container">
+    <div class="problem-grid" id="problemGrid"></div>
+  </div>
+
+  <div class="container">
+    <div id="continueBand"></div>
+    <div id="streakBand"></div>
+  </div>
+
+  <div class="section container" style="padding-top:32px;padding-bottom:20px;">
+    <div class="section-head" style="margin-bottom:20px;">
+      <div class="eyebrow"><span class="dot"></span> Or jump straight to a tool</div>
+    </div>
+    <div class="grid g-4" id="homeToolGrid"></div>
+    <p class="center muted" style="margin-top:18px;">Not seeing your problem above? <a href="#resources" onclick="go('resources')">Browse every resource by topic →</a></p>
+  </div>
+
+  <div class="section container" style="padding-top:0;">
+    <div class="crisis-band">
+      <div class="ic">!</div>
+      <div>
+        <h3>Struggling right now? You don't have to wait.</h3>
+        <p style="margin-bottom:10px;">SCOPE is educational, not a crisis service or a replacement for a therapist, doctor, or counselor. If you or someone you know is in danger or thinking about suicide, get real help now.</p>
+        <a href="#crisis" onclick="go('crisis')" class="btn btn-primary btn-sm">See crisis resources →</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section container" style="padding-top:0;padding-bottom:40px;">
+    <div class="grid g-2">
+      <div class="card" style="background:var(--blue-soft);border-color:#C9DAE2;">
+        <h3 style="font-size:1.05rem;">Parent of a student?</h3>
+        <p style="font-size:.92rem;">What to know, in English or Español. <a href="#parents" onclick="go('parents')">Visit →</a></p>
+      </div>
+      <div class="card" style="background:var(--accent-soft);border-color:#EBD3A6;">
+        <h3 style="font-size:1.05rem;">Counselor or teacher?</h3>
+        <p style="font-size:.92rem;">Bring SCOPE to your school. <a href="#counselors" onclick="go('counselors')">Learn more →</a></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== RESOURCES ===================== -->
+<section class="view" id="view-resources">
+  <div class="section container" style="padding-bottom:0;">
+    <div class="eyebrow"><span class="dot"></span> Resources</div>
+    <h1 style="font-size:clamp(1.9rem,4vw,2.6rem);">Find what's going on, right now</h1>
+    <p style="max-width:560px;font-size:1.05rem;">Search by how you're feeling or pick a category. Every guide is short, specific, and ends with next steps.</p>
+    <div class="field" style="max-width:480px;margin-top:20px;">
+      <input type="text" id="resourceSearch" placeholder="Try “test anxiety” or “can't sleep”…" oninput="renderResourceList()">
+    </div>
+    <div id="categoryPills" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;"></div>
+    <div class="nudge-band" style="margin-top:22px;">
+      <div><div class="lbl">Stressed about a specific class?</div><div class="val">Figure out what to prioritize in about a minute.</div></div>
+      <a href="#class-stress" onclick="go('class-stress')" class="btn btn-primary btn-sm">Try it →</a>
+    </div>
+    <div id="favPanel" style="margin-top:22px;"></div>
+  </div>
+
+  <div class="section container" id="resourceListSection">
+    <div class="grid g-3" id="resourceList"></div>
+    <p class="muted center" id="resourceEmpty" style="display:none;margin-top:20px;">No resources matched — try a different word, or <a href="#contact" onclick="go('contact')">tell us what's missing</a>.</p>
+  </div>
+
+  <!-- detail view -->
+  <div class="section container" id="resourceDetail" style="display:none;padding-top:0;">
+    <button class="btn btn-ghost btn-sm" onclick="closeResourceDetail()">← Back to resources</button>
+    <div class="card-tool" style="margin-top:20px;max-width:760px;">
+      <div class="eyebrow" id="rdTag"><span class="dot"></span></div>
+      <h2 id="rdTitle"></h2>
+      <p id="rdBlurb" style="font-size:1.05rem;"></p>
+      <h3 style="margin-top:26px;">What actually helps</h3>
+      <ul id="rdTips" class="stack-sm" style="list-style:none;padding:0;"></ul>
+      <div id="rdEvidence" style="margin-top:20px;"></div>
+      <div class="divider"></div>
+      <h3>Next steps</h3>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn btn-primary btn-sm" id="rdFavBtn" onclick="toggleFavorite()">☆ Save to favorites</button>
+        <a href="#study-tools" onclick="go('study-tools')" class="btn btn-ghost btn-sm">Open related tool</a>
+        <button class="btn btn-ghost btn-sm" onclick="downloadGuide()">Download PDF guide</button>
+      </div>
+      <h3 style="margin-top:26px;">Related resources</h3>
+      <div class="grid g-3" id="rdRelated"></div>
+      <div class="feedback-box">
+        <strong>Was this helpful?</strong>
+        <div class="yn">
+          <button class="btn btn-ghost btn-sm" onclick="submitFeedback(true)">🙂 Yes</button>
+          <button class="btn btn-ghost btn-sm" onclick="submitFeedback(false)">🙁 Not really</button>
+        </div>
+        <div class="feedback-thanks" id="feedbackThanks">Thanks — this helps schools understand what students actually need.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== STUDY TOOLS ===================== -->
+<section class="view" id="view-study-tools">
+  <div class="section container" style="padding-bottom:20px;">
+    <div class="eyebrow"><span class="dot"></span> Study tools</div>
+    <h1 style="font-size:clamp(1.9rem,4vw,2.6rem);">Tools you can use in the next 30 seconds</h1>
+    <p style="max-width:560px;font-size:1.05rem;">Seven free tools. Everything saves only on this device — no account, no sign-in, nothing sent to a server.</p>
+    <div class="nudge-band" style="margin-top:18px;max-width:560px;">
+      <div><div class="lbl">Not sure where to start?</div><div class="val">Stressed about a specific class? Try the Class Stress Navigator.</div></div>
+      <a href="#class-stress" onclick="go('class-stress')" class="btn btn-primary btn-sm">Try it →</a>
+    </div>
+    <div class="tabbar" id="toolTabs">
+      <button class="active" onclick="switchTab('pomodoro')">Focus for 25 minutes</button>
+      <button onclick="switchTab('satcd')">See my SAT countdown</button>
+      <button onclick="switchTab('apcd')">Track my AP exams</button>
+      <button onclick="switchTab('planner')">Plan my week</button>
+      <button onclick="switchTab('sleep')">Figure out my sleep schedule</button>
+      <button onclick="switchTab('stress')">Check my stress</button>
+      <button onclick="switchTab('burnout')">Check my burnout</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <!-- Pomodoro -->
+    <div class="tabpane active" id="tab-pomodoro">
+      <div class="grid g-2">
+        <div class="card-tool center">
+          <div class="ring-wrap" style="max-width:260px;">
+            <svg viewBox="0 0 200 200">
+              <circle class="track" cx="100" cy="100" r="88" fill="none" stroke-width="14"/>
+              <circle id="pomoRing" class="progress" cx="100" cy="100" r="88" fill="none" stroke-width="14" stroke-dasharray="553" stroke-dashoffset="0"/>
+            </svg>
+            <div class="ring-center">
+              <div class="time" id="pomoTime">25:00</div>
+              <div class="label" id="pomoLabel">Focus</div>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;">
+            <button class="btn btn-primary" id="pomoStartBtn" onclick="pomoToggle()">▶ Start</button>
+            <button class="btn btn-ghost" onclick="pomoReset()">Reset</button>
+          </div>
+        </div>
+        <div class="card-tool">
+          <h3>Why short focused sprints can help</h3>
+          <p>The Pomodoro Technique itself hasn't been heavily studied as a branded method, but it borrows from well-supported ideas: working in short, focused bursts with real breaks can help manage mental fatigue and make it easier to resist checking your phone "just for a second." The break isn't wasted time — it's part of what makes the next sprint easier.</p>
+          <div class="field">
+            <label for="pomoFocusLen">Focus length (minutes)</label>
+            <input type="text" id="pomoFocusLen" value="25" inputmode="numeric">
+          </div>
+          <div class="field">
+            <label for="pomoBreakLen">Break length (minutes)</label>
+            <input type="text" id="pomoBreakLen" value="5" inputmode="numeric">
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="pomoApplySettings()">Apply</button>
+          <p class="muted" style="margin-top:14px;">Completed sessions today: <strong id="pomoCount">0</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SAT countdown -->
+    <div class="tabpane" id="tab-satcd">
+      <div class="grid g-2">
+        <div class="card-tool center">
+          <div class="eyebrow" style="justify-content:center;"><span class="dot"></span> SAT Countdown</div>
+          <div class="time" id="satCountdown" style="font-family:var(--font-mono);font-size:2.6rem;font-weight:700;color:var(--brand-dark);">— — —</div>
+          <p class="muted">days until your test date</p>
+          <div class="field" style="max-width:260px;margin:16px auto 0;text-align:left;">
+            <label for="satDate">Your SAT date</label>
+            <input type="date" id="satDate" onchange="updateSatCountdown()">
+          </div>
+        </div>
+        <div class="card-tool">
+          <h3>What to do with the time you have</h3>
+          <ul class="stack-sm" style="list-style:none;padding:0;">
+            <li><span class="ring-bullet"></span>4+ weeks out: take a full practice test to find your baseline and weakest section.</li>
+            <li><span class="ring-bullet"></span>2–3 weeks out: drill your weakest section 20–30 minutes a day, not everything at once.</li>
+            <li><span class="ring-bullet"></span>Final week: shift to review and sleep — cramming new material now adds stress without adding score.</li>
+            <li><span class="ring-bullet"></span>Night before: no studying after dinner. Pack your bag, set two alarms, go to bed on time.</li>
+          </ul>
+          <a href="#resources" onclick="go('resources');openResourceById('sat-test-anxiety')" class="btn btn-ghost btn-sm" style="margin-top:10px;">Read: Managing SAT test anxiety →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- AP countdown -->
+    <div class="tabpane" id="tab-apcd">
+      <div class="grid g-2">
+        <div class="card-tool center">
+          <div class="eyebrow" style="justify-content:center;"><span class="dot"></span> AP Exam Countdown</div>
+          <div class="time" id="apCountdown" style="font-family:var(--font-mono);font-size:2.6rem;font-weight:700;color:var(--brand-dark);">— — —</div>
+          <p class="muted">days until your next AP exam</p>
+          <div class="inline-fields" style="max-width:380px;margin:16px auto 0;text-align:left;">
+            <div class="field">
+              <label for="apSubject">Subject</label>
+              <input type="text" id="apSubject" placeholder="e.g. AP Biology">
+            </div>
+            <div class="field">
+              <label for="apDate">Exam date</label>
+              <input type="date" id="apDate">
+            </div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="addApExam()">Add exam</button>
+          <div id="apExamList" style="margin-top:16px;text-align:left;"></div>
+        </div>
+        <div class="card-tool">
+          <h3>Multiple AP exams? Don't split evenly.</h3>
+          <p>Spending equal time on every exam feels fair but wastes hours on subjects you've already got. Research on "desirable difficulty" suggests spending more time where you're weakest tends to help more than splitting time evenly — try pairing that with retrieval practice (flashcards, past FRQs) instead of re-reading notes.</p>
+          <ul class="stack-sm" style="list-style:none;padding:0;">
+            <li><span class="ring-bullet"></span>Rank your exams by confidence, weakest first.</li>
+            <li><span class="ring-bullet"></span>Do one full past FRQ per subject per week under timed conditions.</li>
+            <li><span class="ring-bullet"></span>Interleave subjects across the week instead of one subject per day.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sleep calculator -->
+    <!-- Planner -->
+    <div class="tabpane" id="tab-planner">
+      <div class="card-tool">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+          <h3 style="margin:0;">Weekly Study Planner</h3>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-ghost btn-sm" onclick="clearPlanner()">Clear all</button>
+            <button class="btn btn-ghost btn-sm" onclick="printPlanner()">Print / save PDF</button>
+          </div>
+        </div>
+        <p class="muted">Click a block, type a subject. Saved automatically — on this device only, no account needed.</p>
+        <div id="plannerGrid" style="overflow-x:auto;"></div>
+      </div>
+    </div>
+
+    <div class="tabpane" id="tab-sleep">
+      <div class="grid g-2">
+        <div class="card-tool">
+          <h3>How much sleep should I aim for?</h3>
+          <p>Sleep-medicine organizations recommend that teenagers (ages 13–18) get <strong>8–10 hours</strong> of sleep a night for optimal health and alertness. This tool helps you find a reasonable bedtime range based on your wake-up time — it's a planning aid, not a medical recommendation, and individual sleep needs vary.</p>
+          <div class="field">
+            <label for="wakeTime">What time do you need to wake up?</label>
+            <input type="time" id="wakeTime" value="06:30">
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="calcSleep()">Show my target bedtime range</button>
+        </div>
+        <div class="card-tool">
+          <h3>Aim to be asleep in this range</h3>
+          <div id="sleepResults" class="stack-sm"></div>
+          <p class="muted" style="margin-top:14px;">Based on the 8–10 hour range recommended for teens by the American Academy of Sleep Medicine. This is a general guide, not a medical recommendation — some students need a bit more or less, and falling asleep itself can take extra time on top of this.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stress check-in -->
+    <div class="tabpane" id="tab-stress">
+      <div class="card-tool" style="max-width:640px;margin:0 auto;">
+        <h3>Stress Check-In</h3>
+        <p class="muted">This is a quick reflection, not a test, score, or diagnosis. There’s no right answer.</p>
+        <p style="font-weight:600;margin-top:16px;">What’s been going on lately with school stress?</p>
+        <div id="stressCheckin"></div>
+      </div>
+    </div>
+
+    <!-- Burnout check-in -->
+    <div class="tabpane" id="tab-burnout">
+      <div class="card-tool" style="max-width:640px;margin:0 auto;">
+        <h3>Burnout Check-In</h3>
+        <p class="muted">This is a quick reflection, not a test, score, or diagnosis. There’s no right answer.</p>
+        <p style="font-weight:600;margin-top:16px;">Which of these sounds most like you right now?</p>
+        <div id="burnoutCheckin"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section container">
+    <div class="section-head"><h2>Downloadable guides</h2><p>Printable, one-page PDFs — grab one and go.</p></div>
+    <div class="grid g-3" id="guideGrid"></div>
+  </div>
+</section>
+
+<!-- ===================== CLASS STRESS NAVIGATOR ===================== -->
+<section class="view" id="view-class-stress">
+  <div class="section container" style="max-width:720px;">
+    <div class="eyebrow"><span class="dot"></span> Class Stress Navigator</div>
+    <h1 style="font-size:clamp(1.9rem,4vw,2.4rem);">Stressed about a class? Let's figure out your next step.</h1>
+    <p style="font-size:1.05rem;">Answer a few quick questions. Based on what you select, you'll get one clear priority — not a diagnosis, not a guess about your exact situation, just a reasonable next step. Takes about a minute.</p>
+
+    <div class="card-tool" style="margin-top:24px;">
+      <div class="csn-progress" id="csnProgress"></div>
+      <div id="csnStepContainer"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== STUDENT TOOLKIT ===================== -->
+<section class="view" id="view-toolkit">
+  <div class="section container" style="padding-bottom:0;">
+    <div class="eyebrow"><span class="dot"></span> Student Toolkit</div>
+    <h1 style="font-size:clamp(1.9rem,4vw,2.6rem);">Useful tools beyond SCOPE</h1>
+    <p style="max-width:620px;font-size:1.05rem;">Free and trusted tools for studying, testing, and learning. This is a short, curated list — not a directory — so everything here is something worth your time.</p>
+    <p class="muted" style="max-width:620px;">SCOPE isn't partnered or affiliated with any of these — we just think they're genuinely useful. These are external websites; SCOPE doesn't control their content and inclusion here isn't an endorsement of everything they offer. Links open in a new tab.</p>
+  </div>
+  <div class="section container" id="toolkitSections"></div>
+</section>
+
+<!-- ===================== COUNSELORS ===================== -->
+<section class="view" id="view-counselors">
+  <div class="section container" style="padding-bottom:0;">
+    <div class="eyebrow"><span class="dot"></span> For educators</div>
+    <h1 style="font-size:clamp(1.9rem,4vw,2.6rem);">Bring SCOPE into your school</h1>
+    <p style="max-width:620px;font-size:1.05rem;">SCOPE is a free companion to what counselors and teachers already do — not a replacement. It's built so students reach for it on their own, between sessions, at 11pm before a test.</p>
+  </div>
+
+  <div class="section container">
+    <div class="grid g-3">
+      <div class="card">
+        <h3>Our mission</h3>
+        <p>Give every student — regardless of what support is available at home — private, evidence-based tools for academic performance and mental well-being.</p>
+      </div>
+      <div class="card">
+        <h3>Our evidence base</h3>
+        <p>Content is grounded in cognitive and educational psychology, sleep science, CBT-informed stress management, and motivation research — written in plain language, cited on every resource page.</p>
+      </div>
+      <div class="card">
+        <h3>Student-first design</h3>
+        <p>No account required, no ads, tools before articles, and a persistent link to crisis resources on every page.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section container" style="padding-top:0;">
+    <div class="grid g-2">
+      <div class="card-tool">
+        <h3>Printable poster &amp; QR code</h3>
+        <p>Download a printable, one-page PDF poster for a classroom, hallway, or counseling office, with a QR code students can scan straight to SCOPE.</p>
+        <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-top:14px;">
+          <div id="qrCodeWrap"></div>
+          <div>
+            <p class="muted" style="margin-bottom:10px;" id="posterHelperText">Download the poster below.</p>
+            <button class="btn btn-ghost btn-sm" onclick="downloadPoster()">Download poster (PDF)</button>
+          </div>
+        </div>
+      </div>
+      <div class="card-tool">
+        <h3>Bring SCOPE to your school</h3>
+        <p>SCOPE is free to use in advisory periods, health classes, testing weeks, or just shared with students directly — no cost, no strings attached, no account required for students.</p>
+        <ul class="stack-sm" style="list-style:none;padding:0;margin-bottom:16px;">
+          <li><span class="ring-bullet"></span>Free for any student or school to use, right now</li>
+          <li><span class="ring-bullet"></span>A single point of contact for questions or feedback</li>
+          <li><span class="ring-bullet"></span><em>Possible future additions</em> if there's interest: classroom lesson plans and anonymized school-level usage summaries — neither exists yet, so please don't expect them at launch</li>
+        </ul>
+        <a href="#contact" onclick="go('contact')" class="btn btn-primary btn-sm">Get in touch</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="section container" style="padding-top:0;">
+    <div class="card" style="background:var(--paper-alt);">
+      <h3>Privacy, in short</h3>
+      <p>Students never need an account. Favorites, the planner, and tool history are saved with your browser's local storage — on that device only, never uploaded anywhere. Analytics are not active in this release; the code has hooks for anonymous, aggregated Google Analytics 4 events if a school deploying SCOPE chooses to connect them later, but nothing is being collected as shipped.</p>
+      <a href="#privacy" onclick="go('privacy')" class="btn btn-ghost btn-sm">Read the full Privacy &amp; Disclaimer page →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PARENTS ===================== -->
+<section class="view" id="view-parents">
+  <div class="section container" style="padding-bottom:0;">
+    <div class="eyebrow"><span class="dot"></span> For parents &amp; caregivers</div>
+    <h1 style="font-size:clamp(1.9rem,4vw,2.6rem);">Help your teen without another lecture</h1>
+    <div class="lang-toggle" style="margin-top:14px;">
+      <button class="active" id="langEnBtn" onclick="setLang('en')">English</button>
+      <button id="langEsBtn" onclick="setLang('es')">Español</button>
+    </div>
+  </div>
+
+  <div class="section container">
+    <div data-lang-block="en" class="active">
+      <div class="grid g-2">
+        <div class="card">
+          <h3>What SCOPE does for your teen</h3>
+          <p>A private space with study tools and short, evidence-based guides on stress, sleep, focus, and motivation — used entirely on their own, with no account required.</p>
+        </div>
+        <div class="card">
+          <h3>What SCOPE doesn't do</h3>
+          <p>It doesn't replace a therapist, doctor, or school counselor, and it never presents itself as a crisis line. If you're worried about your teen's safety, use the resources on our <a href="#crisis" onclick="go('crisis')">Crisis Resources</a> page immediately.</p>
+        </div>
+      </div>
+      <div class="card-tool" style="margin-top:20px;">
+        <h3>Three things that actually help, backed by research</h3>
+        <ul class="stack-sm" style="list-style:none;padding:0;">
+          <li><span class="ring-bullet"></span><strong>Protect sleep first.</strong> Teens need 8–10 hours, and insufficient sleep is associated with problems involving attention, behavior, and learning.</li>
+          <li><span class="ring-bullet"></span><strong>Ask about process, not just grades.</strong> "What did you try?" builds resilience more than "What did you get?"</li>
+          <li><span class="ring-bullet"></span><strong>Normalize breaks.</strong> Downtime isn't laziness — it's part of how the brain consolidates learning.</li>
+        </ul>
+      </div>
+      <div style="margin-top:24px;">
+        <a href="#resources" onclick="go('resources')" class="btn btn-primary btn-sm">Browse resources to share with your teen</a>
+      </div>
+    </div>
+    <div data-lang-block="es">
+      <div class="grid g-2">
+        <div class="card">
+          <h3>Qué hace SCOPE por tu hijo/a</h3>
+          <p>Un espacio privado con herramientas de estudio y guías breves basadas en evidencia sobre el estrés, el sueño, la concentración y la motivación — sin necesidad de crear una cuenta.</p>
+        </div>
+        <div class="card">
+          <h3>Qué no hace SCOPE</h3>
+          <p>No reemplaza a un terapeuta, médico o consejero escolar, y nunca se presenta como una línea de crisis. Si te preocupa la seguridad de tu hijo/a, usa de inmediato los recursos en nuestra página de <a href="#crisis" onclick="go('crisis')">Recursos de Crisis</a>.</p>
+        </div>
+      </div>
+      <div class="card-tool" style="margin-top:20px;">
+        <h3>Tres cosas que realmente ayudan, según la investigación</h3>
+        <ul class="stack-sm" style="list-style:none;padding:0;">
+          <li><span class="ring-bullet"></span><strong>Prioriza el sueño.</strong> Los adolescentes necesitan de 8 a 10 horas de sueño, y dormir menos de lo necesario está asociado con problemas de atención, comportamiento y aprendizaje.</li>
+          <li><span class="ring-bullet"></span><strong>Pregunta sobre el proceso, no solo las calificaciones.</strong> "¿Qué intentaste?" fortalece la resiliencia más que "¿Qué nota sacaste?"</li>
+          <li><span class="ring-bullet"></span><strong>Normaliza los descansos.</strong> El tiempo libre no es pereza — es parte de cómo el cerebro consolida el aprendizaje.</li>
+        </ul>
+      </div>
+      <div style="margin-top:24px;">
+        <a href="#resources" onclick="go('resources')" class="btn btn-primary btn-sm">Explora recursos para compartir con tu hijo/a</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== ABOUT ===================== -->
+<section class="view" id="view-about">
+  <div class="section container">
+    <div class="eyebrow"><span class="dot"></span> About</div>
+    <h1 style="font-size:clamp(1.9rem,4vw,2.6rem);max-width:640px;">Real psychology and learning science, without the jargon</h1>
+    <p style="max-width:620px;font-size:1.05rem;">SCOPE exists because most student mental-health and study-skills content is either a wall of text nobody reads or an app that needs a login before it's useful. We wanted neither.</p>
+
+    <div class="card-tool" style="margin-top:30px;max-width:680px;">
+      <h3>What does SCOPE mean?</h3>
+      <p>SCOPE stands for <strong>Student Center for Occupation, Psychology, and Education</strong>. It brings together practical academic tools (Education), accessible psychology and stress-management resources (Psychology), and early exploration of careers and what comes after high school (Occupation) — all in one place built specifically for students.</p>
+      <p style="margin-bottom:0;">SCOPE is an independent, student-focused educational project — not an official center, government program, university institution, or licensed healthcare provider. "Center" describes what it aims to be for students: one place to start, not a formal organization.</p>
+    </div>
+
+    <div class="grid g-3" style="margin-top:24px;">
+      <div class="card"><h3>Who it's for</h3><p>Middle and high school students first — with sections built for the parents, teachers, and counselors around them.</p></div>
+      <div class="card"><h3>What it does</h3><p>Combines short, evidence-informed resources, interactive tools like the Pomodoro timer and Class Stress Navigator, and a curated toolkit of trusted external resources.</p></div>
+      <div class="card"><h3>How we write</h3><p>Claims on SCOPE are written to reflect what research actually supports — including when evidence is limited, mixed, or from a single study. Sources are cited on resource pages.</p></div>
+    </div>
+    <div class="card-tool" style="margin-top:20px;">
+      <h3>What SCOPE is not</h3>
+      <p>SCOPE is an educational resource for everyday academic stress and well-being — things like test anxiety, study habits, sleep, focus, procrastination, and burnout. It is <strong>not</strong> therapy, not a diagnostic or medical service, not a crisis counseling service, and not a substitute for a school counselor, therapist, doctor, or other professional. If you need one of those, SCOPE's job is to help point you toward it, not replace it.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <a href="#crisis" onclick="go('crisis')" class="btn btn-ghost btn-sm">See our crisis resources</a>
+        <a href="#privacy" onclick="go('privacy')" class="btn btn-ghost btn-sm">Privacy &amp; Disclaimer</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CONTACT ===================== -->
+<section class="view" id="view-contact">
+  <div class="section container">
+    <div class="eyebrow"><span class="dot"></span> Contact</div>
+    <h1 style="font-size:clamp(1.9rem,4vw,2.6rem);">Get in touch</h1>
+    <p style="max-width:560px;font-size:1.05rem;">SCOPE is currently a static website with no backend, so there's no contact form here that would actually go anywhere. Here's what actually works right now.</p>
+    <div class="grid g-2" style="margin-top:20px;align-items:flex-start;">
+      <div class="card-tool" id="contactEmailCard"></div>
+      <div class="card">
+        <h3>Not what you're looking for?</h3>
+        <p>If this is urgent and about your safety, please go to our <a href="#crisis" onclick="go('crisis')">Crisis Resources</a> page instead — it's faster than waiting on any reply.</p>
+        <h3 style="margin-top:20px;">Found this through your school?</h3>
+        <p>The fastest way to reach the SCOPE team right now is through whoever shared this with you — a counselor, teacher, or administrator.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CRISIS ===================== -->
+<section class="view" id="view-crisis">
+  <div class="section container">
+    <div class="crisis-band" style="align-items:center;">
+      <div class="ic" style="width:52px;height:52px;font-size:1.3rem;">!</div>
+      <div>
+        <h2 style="color:var(--rust);margin-bottom:6px;">If you're in immediate danger or need crisis support, SCOPE isn't the right resource</h2>
+        <p style="margin-bottom:0;">SCOPE is an educational tool for everyday academic stress and well-being — it does not provide crisis counseling and can’t respond to an emergency. Please use one of these established services instead. If you or someone you know is in immediate danger, call 911 (US) or go to the nearest emergency room right now.</p>
+      </div>
+    </div>
+
+    <div class="grid g-3" style="margin-top:30px;">
+      <div class="card">
+        <h3>988 Suicide &amp; Crisis Lifeline</h3>
+        <p>Call, text, or <a href="https://988lifeline.org/chat/" target="_blank" rel="noopener">chat</a> <strong>988</strong> (US) — free, confidential support 24/7 for suicidal thoughts or emotional crisis.</p>
+      </div>
+      <div class="card">
+        <h3>Crisis Text Line</h3>
+        <p>Text <strong>HOME</strong> to <strong>741741</strong> (US) to reach a trained crisis counselor by text, 24/7.</p>
+      </div>
+      <div class="card">
+        <h3>Trevor Project (LGBTQ+ youth)</h3>
+        <p>Call <strong>1-866-488-7386</strong> or text <strong>START</strong> to <strong>678678</strong> — 24/7 support for LGBTQ+ young people.</p>
+      </div>
+      <div class="card">
+        <h3>Emergency services</h3>
+        <p>If there is immediate danger to life, call <strong>911</strong> (US) or go to your nearest emergency room.</p>
+      </div>
+      <div class="card">
+        <h3>Talk to a trusted adult</h3>
+        <p>A school counselor, teacher, coach, or parent can help you get further support quickly — you don't have to explain everything at once.</p>
+      </div>
+      <div class="card">
+        <h3>Outside the US</h3>
+        <p>Visit <a href="https://findahelpline.com" target="_blank" rel="noopener">findahelpline.com</a> for a crisis line in your country.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+    <h3>If you're not in crisis, but things feel like a lot</h3>
+    <p>You might find these SCOPE resources useful instead:</p>
+    <div class="grid g-3" id="crisisRelated"></div>
+  </div>
+</section>
+
+<!-- ===================== PRIVACY & DISCLAIMER ===================== -->
+<section class="view" id="view-privacy">
+  <div class="section container">
+    <div class="eyebrow"><span class="dot"></span> Privacy &amp; Disclaimer</div>
+    <h1 style="font-size:clamp(1.9rem,4vw,2.4rem);">Privacy &amp; Disclaimer</h1>
+    <p style="max-width:620px;font-size:1.05rem;">Plain-language version, not a long legal document. If anything here is unclear, that's a bug — <a href="#contact" onclick="go('contact')">let us know</a>.</p>
+
+    <div class="grid g-2" style="margin-top:30px;align-items:flex-start;">
+      <div class="card">
+        <h3>Privacy</h3>
+        <ul class="stack-sm" style="list-style:none;padding:0;">
+          <li><span class="ring-bullet"></span>No account or login is required to use any part of SCOPE.</li>
+          <li><span class="ring-bullet"></span>Some tools (favorites, the weekly planner, your Pomodoro count, your last-viewed resource) save data using your browser's local storage — on your device only. That data is never sent to a server and disappears if you clear your browser data.</li>
+          <li><span class="ring-bullet"></span>SCOPE does not collect names, email addresses, grades, school records, or any mental-health information.</li>
+          <li id="privacyAnalyticsLine"><span class="ring-bullet"></span></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Educational Disclaimer</h3>
+        <ul class="stack-sm" style="list-style:none;padding:0;">
+          <li><span class="ring-bullet"></span>SCOPE provides general educational information about study strategies and stress management.</li>
+          <li><span class="ring-bullet"></span>SCOPE does not provide medical or psychological diagnosis, treatment, or therapy.</li>
+          <li><span class="ring-bullet"></span>SCOPE does not replace a school counselor, therapist, doctor, or other licensed professional.</li>
+          <li><span class="ring-bullet"></span>The Stress and Burnout Check-Ins are reflection tools, not clinical assessments.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="grid g-2" style="margin-top:20px;align-items:flex-start;">
+      <div class="card">
+        <h3>External Links</h3>
+        <ul class="stack-sm" style="list-style:none;padding:0;">
+          <li><span class="ring-bullet"></span>SCOPE links to external resources, including the Student Toolkit and citations on resource pages.</li>
+          <li><span class="ring-bullet"></span>SCOPE does not control the content, availability, or policies of external websites.</li>
+          <li><span class="ring-bullet"></span>Linking to a resource does not mean SCOPE is partnered with, sponsored by, or endorsed by that organization.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Crisis</h3>
+        <ul class="stack-sm" style="list-style:none;padding:0;">
+          <li><span class="ring-bullet"></span>SCOPE is not an emergency or crisis service and cannot respond to an emergency.</li>
+          <li><span class="ring-bullet"></span>If you're in immediate danger, use the resources on the <a href="#crisis" onclick="go('crisis')">Crisis Resources</a> page or call 911 (US).</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+
+
+<footer class="site">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="color:#fff;margin-bottom:6px;">
+          <svg class="ring" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="3"/><circle cx="13" cy="13" r="10" fill="none" stroke="#E3A857" stroke-width="3" stroke-linecap="round" stroke-dasharray="63" stroke-dashoffset="18" transform="rotate(-90 13 13)"/></svg>
+          SCOPE
+        </div>
+        <p style="color:#9DBBB0;font-size:.72rem;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.04em;margin-bottom:12px;">Student Center for Occupation, Psychology, and Education</p>
+        <p style="color:#CBDDD6;font-size:.88rem;max-width:260px;">Free, evidence-informed study tools and academic well-being resources for middle and high school students. Independent student-focused project, currently in its first public release. No accounts, no ads.</p>
+      </div>
+      <div>
+        <h4>Platform</h4>
+        <a href="#resources" onclick="go('resources')">Resources</a>
+        <a href="#study-tools" onclick="go('study-tools')">Study Tools</a>
+        <a href="#toolkit" onclick="go('toolkit')">Student Toolkit</a>
+      </div>
+      <div>
+        <h4>Community</h4>
+        <a href="#parents" onclick="go('parents')">Parents</a>
+        <a href="#counselors" onclick="go('counselors')">Counselors &amp; Schools</a>
+        <a href="#about" onclick="go('about')">About SCOPE</a>
+      </div>
+      <div>
+        <h4>Support</h4>
+        <a href="#crisis" onclick="go('crisis')">Crisis Resources</a>
+        <a href="#contact" onclick="go('contact')">Contact</a>
+        <a href="#privacy" onclick="go('privacy')">Privacy &amp; Disclaimer</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 SCOPE — Student Center for Occupation, Psychology, and Education. Not a substitute for professional medical, psychological, or crisis care.</span>
+      <span>First public release — no accounts, no ads, no data leaves your device unless noted.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ================= CONFIG =================
+   SCOPE is a static site with no backend. Fill these in before deploying:
+   - SITE_URL: once SCOPE is deployed at a real address, set this so the
+     counselor QR code and poster PDF can point somewhere real. Left blank
+     on purpose — a QR code pointing at a fake domain is worse than none.
+   - CONTACT_EMAIL / SCHOOL_EMAIL: real inboxes to receive messages. Left blank
+     on purpose — the Contact page shows an honest "not yet configured" state
+     instead of a form that silently goes nowhere.
+*/
+const CONFIG = {
+  SITE_URL: '',        // e.g. 'https://scope.yourdomain.org' — leave blank until deployed
+  CONTACT_EMAIL: '',   // e.g. 'hello@yourdomain.org'
+  SCHOOL_EMAIL: ''     // e.g. 'schools@yourdomain.org'
+};
+
+window.dataLayer = window.dataLayer || [];
+function gaEvent(name, params){ window.dataLayer.push(Object.assign({event:name}, params||{})); console.log('[GA4 stub — not yet connected]', name, params||{}); }
+/* This build does NOT send data to Google Analytics or anywhere else. gaEvent() only
+   logs to the browser console right now, so you can see what WOULD be tracked.
+   To go live: add the GA4 gtag.js snippet to <head> and replace the console.log
+   above with a real gtag('event', name, params) call. Until then, no analytics
+   are actually being collected. */
+
+/* ================= ROUTER ================= */
+const ROUTES = ['home','resources','study-tools','toolkit','counselors','parents','about','contact','crisis','class-stress','privacy'];
+function go(route){
+  if(!ROUTES.includes(route)) route='home';
+  ROUTES.forEach(r=>{
+    const el = document.getElementById('view-'+r);
+    if(el) el.classList.toggle('active', r===route);
+  });
+  document.querySelectorAll('nav.primary a').forEach(a=>a.classList.toggle('active', a.dataset.route===route));
+  window.scrollTo({top:0,behavior:'instant' in window ? 'instant':'auto'});
+  document.getElementById('primaryNav').classList.remove('open');
+  document.getElementById('menuToggle').setAttribute('aria-expanded','false');
+  location.hash = route;
+  gaEvent('page_view',{route});
+}
+document.getElementById('menuToggle').addEventListener('click',()=>{
+  const nav=document.getElementById('primaryNav');
+  const isOpen = nav.classList.toggle('open');
+  document.getElementById('menuToggle').setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+});
+window.addEventListener('hashchange',()=>{
+  const r = location.hash.replace('#','') || 'home';
+  go(r);
+});
+
+/* ================= RESOURCE DATA =================
+   Evidence policy: every "sources" entry below is a real, verifiable citation.
+   Wording distinguishes association vs. experimental evidence, single-study vs.
+   multi-study support, and avoids "proven"/"causes" language unless justified. */
+const RESOURCES = [
+  {id:'sat-test-anxiety', cat:'Test Anxiety', tags:['sat','test anxiety','nervous','panic'], title:'Managing SAT Test Anxiety',
+   blurb:"A racing heart and blank mind before a big test isn't a knowledge problem — it's a stress response that can make it harder to access what you actually know. There are things you can try before and during the test that may help.",
+   tips:['The night before: stop studying by dinner. Pack your bag and lay out clothes so your brain isn\u2019t scrambling in the morning.','If your mind goes blank on a question, try 4 slow breaths (4 seconds in, 6 out) — slow breathing is commonly used to help calm physical stress symptoms in the short term.','Try reframing the flutter in your stomach as your body getting ready to perform, instead of a sign something is wrong. In controlled studies, students taught to reappraise test-related arousal this way scored somewhat better on standardized tests like the GRE than students who weren\u2019t — though the effect found across studies is real but modest, and it won\u2019t erase anxiety for everyone.','Do a full timed practice section in the two weeks before, so exam-day format feels familiar, not new.'],
+   evidence:'Reappraising stress arousal (thinking of nervous-system arousal as "your body helping you" rather than a threat) has been tested in randomized experiments on graduate-level standardized tests and classroom exams, with a 2024 meta-analysis of 44 effect sizes finding a small but statistically significant performance improvement (d = 0.23). This has not been tested specifically on the SAT, so treat it as a reasonable strategy supported by related research, not an SAT-specific guarantee.',
+   sources:[
+     {label:'Jamieson, Mendes, Blackstock & Schmader (2010). "Turning the knots in your stomach into bows: Reappraising arousal improves performance on the GRE." Journal of Experimental Social Psychology, 46(1), 208\u2013212.', url:'https://doi.org/10.1016/j.jesp.2009.08.015'},
+     {label:'Meta-analysis (2024) of stress-reappraisal and "stress-is-enhancing" mindset interventions on task performance, Scientific Reports.', url:'https://www.nature.com/articles/s41598-024-58408-w'}
+   ]},
+  {id:'ap-exam-stress', cat:'AP Exam Stress', tags:['ap','ap exam','stress','frq'], title:'Handling AP Exam Stress',
+   blurb:'Multiple AP exams packed into two weeks in May creates a specific kind of overload: not "I don\u2019t know the material" but "I don\u2019t know where to start."',
+   tips:['Rank your exams by confidence and give your weakest subject the most calendar time — not equal time.','Practice retrieval (blank-page recall, past FRQs) instead of re-reading notes. Across many studies, testing yourself tends to produce stronger long-term recall than repeated re-reading, especially when the final test is more than a few days away.','Build in one full rest day between back-to-back exam days if your schedule allows it.','Use the AP Exam Countdown tool to plan backwards from each date.'],
+   evidence:'The benefit of practice testing over re-reading (the "testing effect") is one of the most consistently replicated findings in learning research, based on decades of laboratory and classroom studies.',
+   sources:[
+     {label:'Roediger & Karpicke (2006). "The Power of Testing Memory: Basic Research and Implications for Educational Practice." Perspectives on Psychological Science, 1(3), 181\u2013210.', url:'https://doi.org/10.1111/j.1745-6916.2006.00012.x'}
+   ]},
+  {id:'study-techniques', cat:'Study Techniques', tags:['study','techniques','flashcards','review'], title:'Evidence-Based Study Techniques',
+   blurb:'Highlighting and re-reading feel productive, but a major research review rated them low-utility compared to other methods. A few techniques were rated higher-utility across many studies.',
+   tips:['Retrieval practice: close the book and try to recall the material before checking. A 2013 review of learning-technique research rated this "high utility," with benefits shown across many age groups and subjects.','Spaced repetition: review material after 1 day, then 3 days, then a week, instead of cramming once. This spacing effect was also rated "high utility" in the same review and is one of the more consistently replicated findings in learning research.','Interleaving: mix problem types instead of doing 20 of the same kind in a row. The 2013 review rated this "moderate utility" — evidence is promising, especially for math and science problem-solving, but less extensive than for retrieval practice and spacing.','Teach it out loud to an empty room — if you get stuck, that\u2019s often a sign of where to focus next.'],
+   evidence:'Grounded in a widely cited 2013 review that rated 10 common study techniques by the strength and breadth of evidence behind each one. Highlighting and rereading were rated low-utility; retrieval practice and spaced practice were rated high-utility; interleaving was rated moderate-utility.',
+   sources:[
+     {label:'Dunlosky, Rawson, Marsh, Nathan & Willingham (2013). "Improving Students\u2019 Learning With Effective Learning Techniques." Psychological Science in the Public Interest, 14(1), 4\u201358.', url:'https://doi.org/10.1177/1529100612453266'}
+   ]},
+  {id:'sleep-memory', cat:'Sleep & Memory', tags:['sleep','memory','tired','insomnia'], title:'Sleep & Memory',
+   blurb:'Sleep plays a real role in how your brain consolidates the day\u2019s learning into long-term memory, and insufficient sleep is linked to worse attention, mood, and academic performance in teens. Cutting sleep to study more often costs you more than it gives, even though it doesn\u2019t always feel that way in the moment.',
+   tips:['Protect the hour before bed: dim lights, no new studying, no doom-scrolling — let your brain wind down.','Aim for 8\u201310 hours of sleep a night. That\u2019s the range sleep-medicine organizations recommend for teenagers, not a number we made up — use the Sleep Tool to find a bedtime range that fits your wake-up time.','If you can\u2019t fall asleep in 20 minutes, get up and do something calm in dim light, then try again — lying awake can train your brain to associate bed with frustration.','A consistent wake time (even on weekends) is one of the more commonly recommended sleep-hygiene habits, and may matter more than chasing one perfect bedtime.'],
+   evidence:'The 8\u201310 hour recommendation for teens (ages 13\u201318) comes from a consensus statement by the American Academy of Sleep Medicine, endorsed by the American Academy of Pediatrics. Insufficient sleep has been associated with attention, behavior, and academic problems in large surveillance studies — this is association evidence, not a controlled experiment proving cause and effect for every individual student.',
+   sources:[
+     {label:'American Academy of Sleep Medicine — "Recommended Amount of Sleep for Pediatric Populations" (2016), endorsed by the American Academy of Pediatrics.', url:'https://aasm.org/advocacy/position-statements/teen-sleep-duration-health-advisory/'},
+     {label:'CDC, "Short Sleep Duration Among Middle School and High School Students — United States, 2015." MMWR.', url:'https://www.cdc.gov/mmwr/volumes/67/wr/mm6703a1.htm'}
+   ]},
+  {id:'burnout-prevention', cat:'Burnout Prevention', tags:['burnout','exhausted','overwhelmed','tired'], title:'Burnout Prevention',
+   blurb:'Burnout isn\u2019t laziness — it\u2019s a pattern of exhaustion, cynicism, and feeling ineffective that can build up from sustained stress without enough recovery. It\u2019s a useful way to think about what\u2019s going on, not a diagnosis SCOPE can give you.',
+   tips:['Schedule recovery like homework — one real block of downtime per day, protected on your calendar.','Notice the pattern: exhaustion at school that sleep doesn\u2019t fully fix, feeling checked-out or cynical about school, and feeling like nothing you do is good enough — researchers studying adolescents have described school burnout using these same three areas.','Cut one commitment before you cut sleep — something has to give, and sleep shouldn\u2019t be it.','Try the Check-In tool below to reflect on how the last couple of weeks have actually been going.'],
+   evidence:'The three-part pattern named above (exhaustion at school, cynicism toward school, and a sense of inadequacy as a student) comes from a study that developed and validated a school-burnout questionnaire with 1,418 adolescents in Finnish upper-secondary and vocational schools. That study is about measuring these three dimensions reliably in students, not about diagnosing any individual — SCOPE\u2019s Check-In does not score or diagnose burnout.',
+   sources:[
+     {label:'Salmela-Aro, Kiuru, Leskinen & Nurmi (2009). "School Burnout Inventory: Reliability and Validity." European Journal of Psychological Assessment, 25(1), 48\u201357. (Study of 1,418 adolescents in Finnish upper-secondary and vocational schools.)', url:'https://doi.org/10.1027/1015-5759.25.1.48'},
+     {label:'Background: Maslach & Jackson (1981). "The measurement of experienced burnout." Journal of Occupational Behaviour, 2(2), 99\u2013113. (Earlier, workplace-focused burnout research that the school-burnout framework above builds on; not itself a study of students.)', url:'https://doi.org/10.1002/job.4030020205'}
+   ]},
+  {id:'focus-attention', cat:'Focus & Attention', tags:['focus','attention','distraction','phone'], title:'Focus & Attention',
+   blurb:'Your brain can\u2019t easily do two attention-demanding tasks at once — switching between homework and your phone has a real "switching cost" most of the time, even when it feels instant.',
+   tips:['Consider putting your phone in another room instead of just face-down nearby. One widely cited 2017 study found that people performed slightly worse on attention and memory tasks when their own phone was simply nearby (even face-down), compared to another room — but a 2022 attempt to repeat that exact experiment did not find the same effect, so the evidence is mixed and the effect, if real, may be small or inconsistent.','Try short focused sprints (like 25 minutes on, 5 off) so your brain knows a break is coming soon.','Single-task on purpose: one tab, one assignment, one subject at a time.','Notice your "urge to check" without acting on it for 60 seconds — the urge often passes.'],
+   evidence:'Task-switching has a well-established cognitive cost in general attention research. The specific claim that a visible-but-unused phone drains attention ("brain drain") comes from one influential 2017 study; a 2022 replication attempt found no effect, and a later meta-analysis found mixed results across studies. We present this as a strategy worth trying, not a settled fact.',
+   sources:[
+     {label:'Ward, Duke, Gneezy & Bos (2017). "Brain Drain: The Mere Presence of One\u2019s Own Smartphone Reduces Available Cognitive Capacity." Journal of the Association for Consumer Research, 2(2), 140\u2013154.', url:'https://doi.org/10.1086/691462'},
+     {label:'Replication study (2022) finding the "brain drain" effect did not replicate under the same conditions. ScienceDirect / Acta Psychologica.', url:'https://www.sciencedirect.com/science/article/pii/S0001691822002323'}
+   ]},
+  {id:'time-management', cat:'Time Management', tags:['time management','planning','deadlines','organize'], title:'Time Management',
+   blurb:'Time-management struggles often aren\u2019t about willpower — they\u2019re about not having a plan concrete enough to actually follow.',
+   tips:['Break big assignments into steps small enough to start in under two minutes ("open the doc," not "write the essay").','Use the Weekly Study Planner to assign specific time blocks, not vague daily to-do lists.','Try tackling your hardest task earlier in a study session rather than last. Some students find focus harder to sustain as a session goes on, but this varies a lot by person — it\u2019s worth testing on yourself rather than assuming it\u2019s universally true.','Build in buffer time — a plan with zero slack breaks the first time something runs long.'],
+   evidence:'The planning strategy here ("implementation intentions" — deciding in advance exactly when/where/how you\u2019ll do something) is backed by a large body of experimental research showing it helps people follow through on goals. We deliberately do not cite "willpower depletion" (the idea that self-control is a resource that runs out over the day) as a reason to do hard tasks first — that theory has had significant, well-known replication failures in psychology research, so we treat "do the hard thing first" as a strategy some people find helpful, not a proven mechanism.',
+   sources:[
+     {label:'Gollwitzer (1999). "Implementation intentions: Strong effects of simple plans." American Psychologist, 54(7), 493\u2013503.', url:'https://doi.org/10.1037/0003-066X.54.7.493'}
+   ]},
+  {id:'motivation-procrastination', cat:'Motivation & Procrastination', tags:['motivation','procrastination','lazy','stuck'], title:'Motivation & Procrastination',
+   blurb:'For a lot of students, procrastination works more like an emotion-regulation problem than a time-management one — you\u2019re avoiding the discomfort of starting, not the task itself.',
+   tips:['Try the "2-minute rule": commit to just 2 minutes of the task — starting is often the hardest part, and momentum can carry you further from there.','Make the task smaller until it feels less intimidating — this often makes it easier to start, though it won\u2019t work every time for every task.','Try going easier on yourself about past procrastination. One study of first-year university students found that those who forgave themselves for procrastinating on an exam were less likely to procrastinate on the next one — this is a single study with college students, not middle/high schoolers, so treat it as a promising but limited finding rather than a settled rule.','Pair a boring task with something you enjoy right after, as a real reward.'],
+   evidence:'Based on one peer-reviewed study of 119 first-year university students, which found an association between self-forgiveness after procrastinating and reduced procrastination on a subsequent exam. This is a single study in a college population — we haven\u2019t found direct research on middle/high schoolers, so we present it as a reasonable strategy to try, not a proven result for this age group.',
+   sources:[
+     {label:'Wohl, Pychyl & Bennett (2010). "I forgive myself, now I can study: How self-forgiveness for procrastinating can reduce future procrastination." Personality and Individual Differences, 48(7), 803\u2013808.', url:'https://doi.org/10.1016/j.paid.2010.01.029'}
+   ]},
+  {id:'mental-health', cat:'Mental Health', tags:['mental health','anxiety','depression','sad'], title:'Mental Health Resources',
+   blurb:'Struggling isn\u2019t a personal failure, and it\u2019s common — a lot of students experience real stress, anxiety, or low mood at some point in school. SCOPE can offer general information and things to try, but it can\u2019t assess or diagnose what you\u2019re going through.',
+   tips:['Notice patterns, not just single bad days: is this "a hard week" or "most weeks lately"?','Talk to one trusted adult, even just to say "I\u2019ve been having a hard time" — you don\u2019t need the full story to start.','Movement, sunlight, and consistent sleep are commonly recommended everyday habits linked to mood — not a cure, but not nothing either.','If it\u2019s affecting most days for more than two weeks, or if you\u2019re worried about yourself, that\u2019s worth telling a counselor, doctor, or another trusted adult — not something to just push through alone.'],
+   evidence:'General, non-diagnostic guidance informed by widely available adolescent mental-health information (e.g., school counseling and public-health sources). This page is not a screening tool and does not assess your mental health.',
+   sources:[]},
+  {id:'crisis-resources', cat:'Crisis Resources', tags:['crisis','suicide','emergency','help now','self harm'], title:'Crisis Resources',
+   blurb:'If you or someone you know is in immediate danger or thinking about suicide, SCOPE isn\u2019t the right resource — please use one of these established services instead.',
+   tips:['Call, text, or chat 988 (US) for the 988 Suicide & Crisis Lifeline, 24/7.','Text HOME to 741741 (US) to reach the Crisis Text Line.','LGBTQ+ young people: call 1-866-488-7386 or text START to 678678 for the Trevor Project.','Call 911 (US) or go to the nearest emergency room for immediate life-threatening emergencies.','Tell a trusted adult — a parent, teacher, coach, or counselor — as soon as you can.'],
+   evidence:'See the full Crisis Resources page for more options, including international resources.',
+   sources:[]},
+];
+
+function catSlug(cat){ return cat.toLowerCase().replace(/[^a-z0-9]+/g,'-'); }
+const CATEGORIES = [...new Set(RESOURCES.map(r=>r.cat))];
+
+/* problem-first triage tiles: one tap to the resource + tool that actually helps */
+const PROBLEMS = [
+  {label:"I'm stressed about a test", sub:'SAT, AP, or any exam', resource:'sat-test-anxiety', tool:'satcd'},
+  {label:"I'm stressed about a class", sub:'Figure out what to prioritize and how to study', classStress:true},
+  {label:"I can't focus", sub:'Distracted, can\u2019t start', resource:'focus-attention', tool:'pomodoro'},
+  {label:"I'm exhausted", sub:'Tired even after sleeping', resource:'sleep-memory', tool:'sleep'},
+  {label:"I'm procrastinating", sub:'Keep putting it off', resource:'motivation-procrastination', tool:null},
+  {label:"I don't know how to study", sub:'Not sure what actually works', resource:'study-techniques', tool:null},
+  {label:'I need help right now', sub:'Crisis support, 24/7', resource:null, tool:null, urgent:true},
+];
+function renderProblemGrid(){
+  document.getElementById('problemGrid').innerHTML = PROBLEMS.map(p=>{
+    if(p.urgent){
+      return `<button class="problem-tile urgent" onclick="go('crisis')">
+        <span><span class="txt">${p.label}</span><span class="sub">${p.sub}</span></span><span class="arrow">→</span>
+      </button>`;
+    }
+    if(p.classStress){
+      return `<button class="problem-tile" onclick="go('class-stress')">
+        <span><span class="txt">${p.label}</span><span class="sub">${p.sub}</span></span><span class="arrow">→</span>
+      </button>`;
+    }
+    return `<button class="problem-tile" onclick="solveProblem('${p.resource}',${p.tool? `'${p.tool}'`:'null'})">
+      <span><span class="txt">${p.label}</span><span class="sub">${p.sub}</span></span><span class="arrow">→</span>
+    </button>`;
+  }).join('');
+}
+function solveProblem(resourceId, toolTab){
+  gaEvent('problem_tile_click',{resource:resourceId, tool:toolTab});
+  go('resources');
+  openResourceById(resourceId, toolTab);
+}
+
+/* quick tool row — named by outcome, not tool jargon */
+function renderHomeGrids(){
+  const tools = [
+    {ic:'⏱', tt:'Focus for 25 min', ds:'Pomodoro timer', tab:'pomodoro'},
+    {ic:'💤', tt:'Find your bedtime', ds:'Sleep tool', tab:'sleep'},
+    {ic:'🗓', tt:'Plan your week', ds:'Weekly planner', tab:'planner'},
+    {ic:'📋', tt:'Check in with yourself', ds:'Stress & burnout', tab:'stress'},
+  ];
+  document.getElementById('homeToolGrid').innerHTML = tools.map(t=>`
+    <a href="#study-tools" class="tool-chip" onclick="go('study-tools');switchTab('${t.tab}')">
+      <span class="ic">${t.ic}</span><span><span class="tt">${t.tt}</span><br><span class="ds">${t.ds}</span></span>
+    </a>`).join('') + `
+    <a href="#toolkit" class="tool-chip" onclick="go('toolkit')">
+      <span class="ic">🔗</span><span><span class="tt">Student Toolkit</span><br><span class="ds">Trusted links for AP, SAT, CLEP &amp; more</span></span>
+    </a>`;
+}
+
+/* continuity: quiet "pick up where you left off", no guilt streaks */
+function renderContinueBand(){
+  const lastRes = localStorage.getItem('scope_last_resource');
+  const lastTool = localStorage.getItem('scope_last_tool');
+  const el = document.getElementById('continueBand');
+  if(!lastRes && !lastTool){ el.innerHTML=''; return; }
+  let html = '';
+  if(lastRes){
+    const r = RESOURCES.find(x=>x.id===lastRes);
+    if(r) html += `<div class="nudge-band"><div><div class="lbl">Welcome back</div><div class="val">Continue: ${r.title}</div></div><a href="#resources" onclick="go('resources');openResourceById('${r.id}')" class="btn btn-ghost btn-sm">Open →</a></div>`;
+  } else if(lastTool){
+    const names={pomodoro:'Pomodoro Timer',satcd:'SAT Countdown',apcd:'AP Countdown',sleep:'Sleep Tool',planner:'Weekly Planner',burnout:'Burnout Check-In',stress:'Stress Check-In'};
+    html += `<div class="nudge-band"><div><div class="lbl">Welcome back</div><div class="val">Pick up: ${names[lastTool]||lastTool}</div></div><a href="#study-tools" onclick="go('study-tools');switchTab('${lastTool}')" class="btn btn-ghost btn-sm">Open →</a></div>`;
+  }
+  el.innerHTML = html;
+}
+function renderStreakBand(){
+  let days = [];
+  try{ days = JSON.parse(localStorage.getItem('scope_visit_days')||'[]'); }catch(e){}
+  const today = new Date().toISOString().slice(0,10);
+  const isNewVisitor = days.length===0;
+  if(!days.includes(today)) days.push(today);
+  days = days.filter(d=>{
+    const diff = (new Date(today)-new Date(d))/(1000*60*60*24);
+    return diff < 7;
+  });
+  localStorage.setItem('scope_visit_days', JSON.stringify(days));
+  const el = document.getElementById('streakBand');
+  if(isNewVisitor || days.length<2){ el.innerHTML=''; return; }
+  el.innerHTML = `<div class="nudge-band" style="background:var(--brand-light);border-color:#C7DDD3;">
+    <div><div class="lbl">This week</div><div class="val">You've checked in ${days.length} days — nice consistency.</div></div>
+  </div>`;
+}
+
+
+/* resources list + search */
+function renderCategoryPills(){
+  const wrap = document.getElementById('categoryPills');
+  wrap.innerHTML = `<button class="pill active" data-cat="all" onclick="filterCat('all',this)">All</button>` +
+    CATEGORIES.map(c=>`<button class="pill" data-cat="${c}" onclick="filterCat('${c}',this)">${c}</button>`).join('');
+}
+let activeCat='all';
+function filterCat(cat, btn){
+  activeCat = cat;
+  document.querySelectorAll('#categoryPills .pill').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  renderResourceList();
+}
+function renderResourceList(){
+  const q = (document.getElementById('resourceSearch').value||'').toLowerCase().trim();
+  let list = RESOURCES.filter(r=>{
+    const matchCat = activeCat==='all' || r.cat===activeCat;
+    const matchQ = !q || r.title.toLowerCase().includes(q) || r.blurb.toLowerCase().includes(q) || r.tags.some(t=>t.includes(q));
+    return matchCat && matchQ;
+  });
+  const grid = document.getElementById('resourceList');
+  document.getElementById('resourceEmpty').style.display = list.length? 'none':'block';
+  grid.innerHTML = list.map(r=>`
+    <button class="cat-card" onclick="openResourceById('${r.id}')">
+      <span class="tag">${r.cat}</span><h3>${r.title}</h3><p>${r.blurb.slice(0,100)}…</p>
+    </button>`).join('');
+}
+function openResourceById(id, toolTab){
+  const r = RESOURCES.find(x=>x.id===id);
+  if(!r) return;
+  document.getElementById('resourceListSection').style.display='none';
+  const det = document.getElementById('resourceDetail');
+  det.style.display='block';
+  det.dataset.id = id;
+  document.getElementById('rdTag').innerHTML = `<span class="dot"></span> ${r.cat}`;
+  document.getElementById('rdTitle').textContent = r.title;
+  document.getElementById('rdBlurb').textContent = r.blurb;
+  document.getElementById('rdTips').innerHTML = r.tips.map(t=>`<li><span class="ring-bullet"></span>${t}</li>`).join('');
+  const sourcesHtml = (r.sources && r.sources.length)
+    ? `<div style="margin-top:10px;"><strong style="font-size:.85rem;">Sources</strong><ul style="list-style:none;padding:0;margin:6px 0 0;">${r.sources.map(s=>`<li style="font-size:.82rem;color:var(--ink-faint);margin-bottom:6px;">${s.url ? `<a href="${s.url}" target="_blank" rel="noopener">${s.label}</a>` : s.label}</li>`).join('')}</ul></div>`
+    : '';
+  document.getElementById('rdEvidence').innerHTML = `<div class="card" style="background:var(--paper-alt);padding:16px 18px;">
+    <strong style="font-size:.85rem;">Evidence &amp; Sources</strong>
+    <p class="muted" style="margin:6px 0 0;">${r.evidence}</p>
+    ${sourcesHtml}
+  </div>`;
+  const favs = getFavorites();
+  document.getElementById('rdFavBtn').innerHTML = favs.includes(id) ? '★ Saved to favorites' : '☆ Save to favorites';
+  const related = RESOURCES.filter(x=>x.id!==id && x.cat===r.cat).concat(RESOURCES.filter(x=>x.id!==id && x.cat!==r.cat)).slice(0,3);
+  document.getElementById('rdRelated').innerHTML = related.map(x=>`
+    <button class="cat-card" onclick="openResourceById('${x.id}')"><span class="tag">${x.cat}</span><h3 style="font-size:1rem;">${x.title}</h3></button>`).join('');
+  document.getElementById('feedbackThanks').style.display='none';
+  window.scrollTo({top:0});
+  localStorage.setItem('scope_last_resource', id);
+  localStorage.removeItem('scope_last_tool');
+  gaEvent('resource_view',{id});
+}
+function closeResourceDetail(){
+  document.getElementById('resourceDetail').style.display='none';
+  document.getElementById('resourceListSection').style.display='block';
+}
+function getFavorites(){ try{return JSON.parse(localStorage.getItem('scope_favorites')||'[]');}catch(e){return [];} }
+function toggleFavorite(){
+  const id = document.getElementById('resourceDetail').dataset.id;
+  let favs = getFavorites();
+  if(favs.includes(id)) favs = favs.filter(f=>f!==id); else favs.push(id);
+  localStorage.setItem('scope_favorites', JSON.stringify(favs));
+  openResourceById(id);
+  renderFavList();
+  gaEvent('favorite_toggle',{id});
+}
+function renderFavList(){
+  const favs = getFavorites();
+  const el = document.getElementById('favPanel');
+  if(!el) return;
+  if(!favs.length){ el.innerHTML=''; return; }
+  el.innerHTML = `<div class="card" style="background:var(--paper-alt);">
+    <h3 style="font-size:1rem;margin-bottom:4px;">★ Saved on this device (${favs.length})</h3>
+    <p class="muted" style="margin-bottom:10px;">Favorites are stored only in this browser — nothing is uploaded, and they won't show up if you switch devices.</p>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;">
+      ${favs.map(id=>{
+        const r = RESOURCES.find(x=>x.id===id);
+        if(!r) return '';
+        return `<button class="pill" onclick="openResourceById('${id}')">${r.title}</button>`;
+      }).join('')}
+    </div>
+  </div>`;
+}
+function submitFeedback(helpful){
+  const id = document.getElementById('resourceDetail').dataset.id;
+  gaEvent('resource_feedback',{id, helpful});
+  document.getElementById('feedbackThanks').style.display='block';
+}
+function downloadGuide(){
+  const id = document.getElementById('resourceDetail').dataset.id;
+  const r = RESOURCES.find(x=>x.id===id);
+  generatePdfGuide(r.title, r.blurb, r.tips);
+  gaEvent('guide_download',{id});
+}
+
+/* ================= TOOL TABS ================= */
+const TOOL_TAB_ORDER = ['pomodoro','satcd','apcd','planner','sleep','stress','burnout'];
+function switchTab(tab){
+  const idx = TOOL_TAB_ORDER.indexOf(tab);
+  document.querySelectorAll('#toolTabs button').forEach((b,i)=>b.classList.toggle('active', i===idx));
+  document.querySelectorAll('.tabpane').forEach(p=>p.classList.toggle('active', p.id==='tab-'+tab));
+  localStorage.setItem('scope_last_tool', tab);
+  localStorage.removeItem('scope_last_resource');
+  gaEvent('tool_view',{tool:tab});
+}
+// wire tab buttons (index-based, matches TOOL_TAB_ORDER)
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('#toolTabs button').forEach((b,i)=>{
+    b.onclick=()=>switchTab(TOOL_TAB_ORDER[i]);
+  });
+});
+
+/* ================= POMODORO ================= */
+let pomoFocus=25*60, pomoBreak=5*60, pomoRemaining=25*60, pomoOnBreak=false, pomoTimer=null;
+let pomoCompleted = parseInt(localStorage.getItem('scope_pomo_count')||'0');
+function pomoApplySettings(){
+  const f = parseInt(document.getElementById('pomoFocusLen').value)||25;
+  const b = parseInt(document.getElementById('pomoBreakLen').value)||5;
+  pomoFocus=f*60; pomoBreak=b*60; pomoReset();
+}
+function pomoRender(){
+  const m=Math.floor(pomoRemaining/60), s=pomoRemaining%60;
+  document.getElementById('pomoTime').textContent = m+':'+String(s).padStart(2,'0');
+  document.getElementById('pomoLabel').textContent = pomoOnBreak? 'Break':'Focus';
+  const total = pomoOnBreak?pomoBreak:pomoFocus;
+  const circumference=553;
+  const offset = circumference * (pomoRemaining/total);
+  document.getElementById('pomoRing').style.strokeDashoffset = offset;
+  document.getElementById('pomoCount').textContent = pomoCompleted;
+}
+function pomoToggle(){
+  const btn = document.getElementById('pomoStartBtn');
+  if(pomoTimer){ clearInterval(pomoTimer); pomoTimer=null; btn.textContent='▶ Start'; return; }
+  btn.textContent='⏸ Pause';
+  localStorage.setItem('scope_last_tool','pomodoro');
+  localStorage.removeItem('scope_last_resource');
+  gaEvent('pomodoro_start',{});
+  pomoTimer = setInterval(()=>{
+    pomoRemaining--;
+    if(pomoRemaining<=0){
+      if(!pomoOnBreak){ pomoCompleted++; localStorage.setItem('scope_pomo_count', pomoCompleted); }
+      pomoOnBreak=!pomoOnBreak;
+      pomoRemaining = pomoOnBreak? pomoBreak:pomoFocus;
+    }
+    pomoRender();
+  },1000);
+}
+function pomoReset(){
+  clearInterval(pomoTimer); pomoTimer=null; pomoOnBreak=false; pomoRemaining=pomoFocus;
+  document.getElementById('pomoStartBtn').textContent='▶ Start';
+  pomoRender();
+}
+
+/* ================= SAT / AP COUNTDOWN ================= */
+function daysBetween(dateStr){
+  if(!dateStr) return null;
+  const target = new Date(dateStr+'T00:00:00');
+  const now = new Date(); now.setHours(0,0,0,0);
+  return Math.ceil((target-now)/(1000*60*60*24));
+}
+function updateSatCountdown(){
+  const d = daysBetween(document.getElementById('satDate').value);
+  document.getElementById('satCountdown').textContent = d===null?'— — —': (d<0? 'Test day passed' : d+' days');
+  gaEvent('countdown_set',{exam:'SAT'});
+}
+let apExams = JSON.parse(localStorage.getItem('scope_ap_exams')||'[]');
+function addApExam(){
+  const subject = document.getElementById('apSubject').value.trim();
+  const date = document.getElementById('apDate').value;
+  if(!subject||!date) return;
+  apExams.push({subject,date});
+  apExams.sort((a,b)=>a.date.localeCompare(b.date));
+  localStorage.setItem('scope_ap_exams', JSON.stringify(apExams));
+  document.getElementById('apSubject').value='';document.getElementById('apDate').value='';
+  renderApExams();
+  gaEvent('countdown_set',{exam:'AP', subject});
+}
+function renderApExams(){
+  const list = document.getElementById('apExamList');
+  if(!apExams.length){ list.innerHTML=''; document.getElementById('apCountdown').textContent='— — —'; return; }
+  const next = apExams[0];
+  const d = daysBetween(next.date);
+  document.getElementById('apCountdown').textContent = (d<0?'Passed: ':d+' days — ') + next.subject;
+  list.innerHTML = apExams.map((e,i)=>`
+    <div style="display:flex;justify-content:space-between;padding:8px 10px;border-bottom:1px solid var(--line);font-size:.9rem;">
+      <span>${e.subject}</span><span class="muted">${e.date} · ${daysBetween(e.date)}d &nbsp;<a href="#" onclick="removeApExam(${i});return false;">remove</a></span>
+    </div>`).join('');
+}
+function removeApExam(i){ apExams.splice(i,1); localStorage.setItem('scope_ap_exams', JSON.stringify(apExams)); renderApExams(); }
+
+/* ================= SLEEP CALCULATOR ================= */
+function calcSleep(){
+  const wake = document.getElementById('wakeTime').value || '06:30';
+  const [h,m] = wake.split(':').map(Number);
+  const wakeDate = new Date(); wakeDate.setHours(h,m,0,0);
+  // Teen sleep recommendation: 8-10 hours (AASM, endorsed by AAP). No 90-minute-cycle math.
+  const earliestBed = new Date(wakeDate.getTime() - 10*60*60000); // 10 hours before wake = earliest reasonable bedtime
+  const latestBed = new Date(wakeDate.getTime() - 8*60*60000);    // 8 hours before wake = latest reasonable bedtime
+  const fmt = d => d.toLocaleTimeString([], {hour:'numeric',minute:'2-digit'});
+  document.getElementById('sleepResults').innerHTML = `
+    <div style="padding:16px;background:var(--paper-alt);border-radius:9px;text-align:center;">
+      <div style="font-family:var(--font-mono);font-size:1.4rem;font-weight:600;color:var(--brand-dark);">${fmt(earliestBed)} \u2013 ${fmt(latestBed)}</div>
+      <div class="muted" style="margin-top:6px;">Aim to be asleep somewhere in this range for 8\u201310 hours before ${fmt(wakeDate)}.</div>
+    </div>`;
+  gaEvent('tool_use',{tool:'sleep_tool'});
+}
+
+/* ================= WEEKLY PLANNER ================= */
+const PLANNER_DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+const PLANNER_SLOTS=['3–4pm','4–5pm','5–6pm','6–7pm','7–8pm','8–9pm'];
+function getPlannerData(){ try{return JSON.parse(localStorage.getItem('scope_planner')||'{}');}catch(e){return {};} }
+function renderPlanner(){
+  const data = getPlannerData();
+  let html = '<table style="border-collapse:collapse;width:100%;min-width:640px;"><thead><tr><th></th>' +
+    PLANNER_DAYS.map(d=>`<th style="padding:8px;font-family:var(--font-mono);font-size:.78rem;color:var(--ink-faint);">${d}</th>`).join('') + '</tr></thead><tbody>';
+  PLANNER_SLOTS.forEach(slot=>{
+    html += `<tr><td style="padding:8px 10px;font-size:.8rem;color:var(--ink-faint);white-space:nowrap;">${slot}</td>`;
+    PLANNER_DAYS.forEach(day=>{
+      const key = day+'|'+slot;
+      const val = data[key]||'';
+      html += `<td style="padding:3px;"><input type="text" value="${val}" placeholder="—" style="width:100px;padding:8px;font-size:.8rem;" onchange="setPlannerCell('${key}',this.value)"></td>`;
+    });
+    html+='</tr>';
+  });
+  html+='</tbody></table>';
+  document.getElementById('plannerGrid').innerHTML = html;
+}
+function setPlannerCell(key,val){
+  const data = getPlannerData(); data[key]=val;
+  localStorage.setItem('scope_planner', JSON.stringify(data));
+  gaEvent('tool_use',{tool:'weekly_planner'});
+}
+function clearPlanner(){ localStorage.removeItem('scope_planner'); renderPlanner(); }
+function printPlanner(){ gaEvent('guide_download',{id:'weekly-planner-print'}); window.print(); }
+
+/* ================= CHECK-IN REFLECTIONS (NOT scored, NOT diagnostic) =================
+   These intentionally do NOT calculate a score, percentage, or label like
+   Low/Moderate/High. A student picks the option that sounds most like them,
+   and gets practical next steps — not an assessment result. */
+const CHECKINS = {
+  stress:{
+    options:[
+      {label:'Things feel mostly manageable.',
+       response:'That\u2019s good to notice — whatever you\u2019re doing to keep things manageable is working. A couple of habits that tend to help keep it that way:',
+       tips:['Keep protecting sleep and breaks, especially before big tests.','Notice what\u2019s been helping, so you can keep doing it during busier weeks.']},
+      {label:'I\u2019ve been more overwhelmed than usual.',
+       response:'That\u2019s a really common feeling, especially around tests or deadlines. A few things that might help right now:',
+       tips:['Try breaking down what\u2019s overwhelming you into smaller, specific tasks — the Weekly Planner can help.','Slow breathing (4 seconds in, 6 out) can help calm the physical feeling of being overwhelmed in the moment.','Consider mentioning it to a teacher or counselor, especially if a deadline feels unmanageable — they can sometimes help more than you\u2019d expect.']},
+      {label:'I\u2019ve been having a hard time keeping up.',
+       response:'Struggling to keep up doesn\u2019t mean something is wrong with you — it usually means the load and the support around it aren\u2019t currently matched. Some things worth trying:',
+       tips:['Talk to a teacher or counselor about what\u2019s realistic right now — they can often adjust deadlines or point you to support you didn\u2019t know was available.','Look at the Time Management and Study Techniques resources for a few concrete strategies.','Be honest with a parent or trusted adult about how things have actually been going.']},
+      {label:'I feel like I need some support.',
+       response:'Thank you for being honest about that. Reaching out is a strong move, not a last resort.',
+       tips:['Talk to a school counselor, parent, doctor, or another trusted adult — they can help in ways SCOPE can\u2019t.','If you\u2019re in immediate danger or thinking about suicide, please use SCOPE\u2019s Crisis Resources right now instead of waiting.']},
+    ]
+  },
+  burnout:{
+    options:[
+      {label:'Things feel mostly manageable.',
+       response:'Good to hear. Burnout tends to build up gradually, so it\u2019s worth keeping an eye on over time, especially during heavy weeks:',
+       tips:['Keep at least one real block of downtime in your week, even when things are calm.','Notice if "mostly manageable" starts slipping during a busier stretch (like exam season).']},
+      {label:'I\u2019ve been more overwhelmed than usual.',
+       response:'That\u2019s a common early sign that your plate is fuller than usual. A few things worth trying:',
+       tips:['Look at what\u2019s actually on your plate this week and see if anything can move or wait.','Protect one non-negotiable break each day, even a short one.','Revisit the Burnout Prevention resource for a few concrete ideas.']},
+      {label:'I\u2019ve been having a hard time keeping up.',
+       response:'Struggling to keep up over a longer stretch — not just one hard day — is worth paying attention to. Consider:',
+       tips:['Cutting one commitment before you cut sleep — something usually has to give.','Talking to a counselor or trusted adult about what\u2019s realistic right now.','Reading the Burnout Prevention resource, which covers common patterns and what tends to help.']},
+      {label:'I feel like I need some support.',
+       response:'Thank you for being honest about that. Reaching out is a strong move, not a last resort.',
+       tips:['Talk to a school counselor, parent, doctor, or another trusted adult — they can help in ways SCOPE can\u2019t.','If you\u2019re in immediate danger or thinking about suicide, please use SCOPE\u2019s Crisis Resources right now instead of waiting.']},
+    ]
+  }
+};
+function buildCheckin(type){
+  const data = CHECKINS[type];
+  const el = document.getElementById(type+'Checkin');
+  el.innerHTML = `<div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;">
+    ${data.options.map((o,i)=>`<button class="btn btn-ghost" style="text-align:left;justify-content:flex-start;" onclick="showCheckinResult('${type}',${i})">${o.label}</button>`).join('')}
+  </div><div id="${type}CheckinResult" style="margin-top:18px;"></div>`;
+}
+function showCheckinResult(type, idx){
+  const opt = CHECKINS[type].options[idx];
+  const needsSupport = idx===3; // "I feel like I need some support"
+  const resultEl = document.getElementById(type+'CheckinResult');
+  resultEl.innerHTML = `<div class="card" style="background:${needsSupport?'var(--rust-soft)':'var(--brand-light)'};">
+    <p style="margin-bottom:10px;font-weight:600;">Here\u2019s what you could try next:</p>
+    <p style="margin-bottom:10px;">${opt.response}</p>
+    <ul class="stack-sm" style="list-style:none;padding:0;margin-bottom:10px;">
+      ${opt.tips.map(t=>`<li><span class="ring-bullet"></span>${t}</li>`).join('')}
+    </ul>
+    <p class="muted" style="margin-bottom:10px;">This reflection doesn\u2019t score, rate, or diagnose anything — it\u2019s just a starting point.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <a href="#resources" onclick="go('resources');openResourceById('${type==='burnout'?'burnout-prevention':'mental-health'}')" class="btn btn-primary btn-sm">Related resource →</a>
+      ${needsSupport?`<a href="#crisis" onclick="go('crisis')" class="btn btn-ghost btn-sm">Crisis resources →</a>`:''}
+    </div>
+  </div>`;
+  gaEvent('checkin_complete',{type, choice:idx});
+}
+
+/* ================= PDF GUIDES ================= */
+function generatePdfGuide(title, blurb, tips){
+  try{
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.setFont('helvetica','bold'); doc.setFontSize(18); doc.text('SCOPE', 15, 18);
+    doc.setFontSize(14); doc.text(title, 15, 30, {maxWidth:180});
+    doc.setFont('helvetica','normal'); doc.setFontSize(11);
+    const blurbLines = doc.splitTextToSize(blurb, 180);
+    doc.text(blurbLines, 15, 42);
+    let y = 42 + blurbLines.length*6 + 8;
+    doc.setFont('helvetica','bold'); doc.text('What actually helps:', 15, y); y+=8;
+    doc.setFont('helvetica','normal');
+    tips.forEach(t=>{
+      const lines = doc.splitTextToSize('• '+t, 178);
+      doc.text(lines, 17, y); y += lines.length*6+3;
+    });
+    y+=6;
+    doc.setFontSize(9); doc.setTextColor(120);
+    doc.text('SCOPE is educational and not a substitute for professional care. If you are in crisis, call or text 988 (US).', 15, y, {maxWidth:180});
+    doc.save(title.replace(/[^a-z0-9]+/gi,'-').toLowerCase()+'.pdf');
+  }catch(e){ alert('PDF generation needs an internet connection to load the PDF library.'); }
+}
+function renderQrCode(){
+  const el = document.getElementById('qrCodeWrap');
+  if(!el) return;
+  if(CONFIG.SITE_URL){
+    el.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(CONFIG.SITE_URL)}" width="140" height="140" alt="QR code linking to SCOPE" style="border-radius:10px;border:1px solid var(--line);">`;
+  } else {
+    el.innerHTML = `<div style="width:140px;height:140px;border:1.5px dashed var(--line);border-radius:10px;display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;">
+      <span class="muted" style="font-size:.72rem;">QR code goes here once SCOPE is deployed and SITE_URL is set</span>
+    </div>`;
+  }
+}
+function downloadPoster(){
+  try{
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.setFontSize(26); doc.setFont('helvetica','bold'); doc.text('SCOPE', 15, 30);
+    doc.setFontSize(14); doc.text('Study smarter. Stress less.', 15, 42);
+    doc.setFontSize(11); doc.setFont('helvetica','normal');
+    const siteLine = CONFIG.SITE_URL ? ('Visit ' + CONFIG.SITE_URL) : 'Ask your counselor how to access SCOPE.';
+    doc.text('Free, evidence-based study tools and student mental health resources.\nNo account needed. ' + siteLine, 15, 55, {maxWidth:180});
+    doc.text('Crisis? Call or text 988 (US), 24/7.', 15, 80);
+    doc.save('scope-poster.pdf');
+  }catch(e){ alert('PDF generation needs an internet connection to load the PDF library.'); }
+  gaEvent('guide_download',{id:'poster-pack'});
+}
+
+/* ================= GUIDE GRID (study tools page) ================= */
+function renderGuideGrid(){
+  const guides = [
+    {title:'The Pomodoro Guide', blurb:'A one-page breakdown of the technique and why breaks matter.', tips:['Work 25 minutes, break 5.','After 4 rounds, take a 20–30 minute break.','Track completed rounds to notice your own patterns.']},
+    {title:'Sleep & Memory Guide', blurb:'Why sleep matters for learning, and how to protect it during exam weeks.', tips:['Aim for 8–10 hours as a teen — that\u2019s the range recommended by the American Academy of Sleep Medicine.','Keep a consistent wake time, even on weekends.','No screens in the last 30 minutes before bed if you can manage it.']},
+    {title:'Weekly Planner Template', blurb:'A printable blank template if you\u2019d rather plan on paper.', tips:['One column per day, one row per time block.','Color-code by subject if that helps you.','Review and adjust it every Sunday.']},
+  ];
+  document.getElementById('guideGrid').innerHTML = guides.map((g,i)=>`
+    <div class="card">
+      <h3>${g.title}</h3><p>${g.blurb}</p>
+      <button class="btn btn-ghost btn-sm" onclick='generatePdfGuide(${JSON.stringify(g.title)}, ${JSON.stringify(g.blurb)}, ${JSON.stringify(g.tips)})'>Download PDF</button>
+    </div>`).join('');
+}
+
+/* Accounts, sign-in, and email reminders are intentionally NOT part of this V1.
+   Favorites and the weekly planner below are saved with localStorage — on this
+   device, this browser, only. See renderFavList() and the planner functions. */
+
+/* ================= CONTACT ================= */
+function renderContactCard(){
+  const el = document.getElementById('contactEmailCard');
+  if(!el) return;
+  if(CONFIG.CONTACT_EMAIL){
+    el.innerHTML = `<h3>Email us</h3><p><a href="mailto:${CONFIG.CONTACT_EMAIL}">${CONFIG.CONTACT_EMAIL}</a></p>
+      <h3 style="margin-top:20px;">School partnerships</h3>
+      <p>${CONFIG.SCHOOL_EMAIL ? `<a href="mailto:${CONFIG.SCHOOL_EMAIL}">${CONFIG.SCHOOL_EMAIL}</a>` : 'Contact email not yet set up.'}</p>`;
+  } else {
+    el.innerHTML = `<h3>Email — not yet configured</h3>
+      <p class="muted">SCOPE doesn't have a live contact address wired up yet. Before launch, add a real email to <code>CONFIG.CONTACT_EMAIL</code> at the top of the site's code.</p>`;
+  }
+}
+
+/* ================= LANGUAGE TOGGLE ================= */
+function setLang(lang){
+  document.querySelectorAll('[data-lang-block]').forEach(el=>el.classList.toggle('active', el.dataset.langBlock===lang));
+  document.getElementById('langEnBtn').classList.toggle('active', lang==='en');
+  document.getElementById('langEsBtn').classList.toggle('active', lang==='es');
+  gaEvent('language_toggle',{lang});
+}
+
+/* ================= CRISIS RELATED ================= */
+function renderCrisisRelated(){
+  const related = RESOURCES.filter(r=>['mental-health','burnout-prevention','sat-test-anxiety'].includes(r.id));
+  document.getElementById('crisisRelated').innerHTML = related.map(r=>`
+    <button class="cat-card" onclick="go('resources');openResourceById('${r.id}')"><span class="tag">${r.cat}</span><h3 style="font-size:1rem;">${r.title}</h3></button>`).join('');
+}
+
+/* ================= PRIVACY PAGE — accurate analytics line ================= */
+function renderPrivacyAnalyticsLine(){
+  const el = document.getElementById('privacyAnalyticsLine');
+  if(!el) return;
+  el.innerHTML = `<span class="ring-bullet"></span>Analytics are not active in this release. The code includes hooks that could send anonymous, aggregated events (page views, tool use, downloads) to Google Analytics 4 if connected in the future — but as this site currently runs, nothing is being collected or sent anywhere.`;
+}
+
+/* ================= CLASS STRESS NAVIGATOR =================
+   Simple, transparent, non-AI logic: a short lookup based on what the
+   student selects. No diagnosis, no data saved, nothing sent anywhere. */
+const CSN_SUBJECTS = [
+  {id:'math', label:'Math'},
+  {id:'science', label:'Science'},
+  {id:'english', label:'English / Language Arts'},
+  {id:'history', label:'History / Social Studies'},
+  {id:'language', label:'Foreign Language'},
+  {id:'other', label:'Other'},
+];
+const CSN_PROBLEMS = [
+  {id:'dont-understand', label:"I don't understand the material"},
+  {id:'behind', label:"I'm behind on assignments"},
+  {id:'test-soon', label:'I have a test or quiz soon'},
+  {id:'too-much', label:'I have too much to do'},
+  {id:'procrastinating', label:"I'm procrastinating and can't start"},
+  {id:'worried-grade', label:"I'm worried about my grade"},
+  {id:'anxious', label:"I'm anxious or overwhelmed"},
+];
+const CSN_URGENCY = [
+  {id:'today', label:'Today'},
+  {id:'tomorrow', label:'Tomorrow'},
+  {id:'3days', label:'Within 3 days'},
+  {id:'week', label:'This week'},
+  {id:'later', label:'More than a week away'},
+  {id:'unsure', label:"I'm not sure"},
+];
+const CSN_CONFIDENCE = [
+  {id:'mostly', label:'I mostly understand it'},
+  {id:'some', label:'I understand some of it'},
+  {id:'confused', label:"I'm very confused"},
+];
+// Subject-specific first actions when a test/quiz is the main concern
+const CSN_SUBJECT_PRACTICE = {
+  math:'Choose 3–5 representative problems. Try them without notes. Mark exactly where you get stuck.',
+  science:'Explain the process or concept out loud without looking at your notes. Then check what you missed.',
+  english:"Reread the prompt and write your main claim in one sentence. Don't wait for a perfect introduction.",
+  history:'Practice explaining: what happened, why it happened, and what changed because of it.',
+  language:'Practice producing the vocabulary from memory — writing or saying it — not just recognizing it.',
+  other:'Pick 3–5 practice questions or problems from your notes and try them without looking anything up first.'
+};
+const CSN_SUBJECT_NEXT = {
+  math:'Review the problems you got wrong and figure out exactly where the mistake happened, then ask your teacher one specific question about that step.',
+  science:'Do a few practice questions instead of rereading the chapter — retrieval sticks better than review.',
+  english:'Write one full paragraph, even a rough one, before trying to make anything perfect. Revise after you have a full draft.',
+  history:'Compare two perspectives on the same event instead of just memorizing dates and names.',
+  language:'Do a short 10–15 minute practice session rather than one long cram session — frequent and short beats rare and long.',
+  other:'Break the remaining work into the smallest possible next step, and do just that one step.'
+};
+const CSN_SUBJECT_NOTE = {
+  math:'For math, prioritize solving problems over rereading examples. Reading a worked example can help you start, but your brain needs practice retrieving the steps on your own.',
+  science:'For science, focus on connecting concepts and systems rather than memorizing isolated facts. Retrieval practice (explaining it without notes, then checking) tends to work better than rereading.',
+  english:"For English, understanding the prompt and identifying your central argument matters more than a polished opening line. Write first, revise after.",
+  history:'For history, focus on relationships between events — cause and effect, chronology, and comparing perspectives — rather than memorizing isolated facts.',
+  language:'For a foreign language, frequent, short, active practice (producing the language, not just recognizing it) tends to work better than infrequent long sessions.',
+  other:'Whatever the subject, retrieval practice (testing yourself) and reviewing your specific mistakes tend to help more than passive rereading.'
+};
+let csnState = {step:0, subject:null, advanced:false, problem:null, urgency:null, confidence:null};
+const CSN_TOTAL_STEPS = 4;
+
+function renderClassStressProgress(){
+  const el = document.getElementById('csnProgress');
+  if(!el) return;
+  let dots = '';
+  for(let i=0;i<CSN_TOTAL_STEPS;i++){
+    const cls = i < csnState.step ? 'done' : (i === csnState.step ? 'current' : '');
+    dots += `<span class="dot ${cls}"></span>`;
+  }
+  el.innerHTML = dots;
+}
+
+function renderClassStressStep(){
+  renderClassStressProgress();
+  const container = document.getElementById('csnStepContainer');
+  if(!container) return;
+
+  if(csnState.step === 0){
+    container.innerHTML = `
+      <p class="muted" style="margin-bottom:6px;">Step 1 of ${CSN_TOTAL_STEPS}</p>
+      <h3>What class is this about?</h3>
+      <div class="csn-options">${CSN_SUBJECTS.map(s=>`<button class="csn-option" onclick="csnSelect('subject','${s.id}')">${s.label}</button>`).join('')}</div>
+      <div class="csn-toggle-row">
+        <input type="checkbox" id="csnAdvanced" ${csnState.advanced?'checked':''} onchange="csnState.advanced=this.checked">
+        <label for="csnAdvanced" style="margin:0;font-weight:500;">This is an advanced or AP-level course</label>
+      </div>`;
+  } else if(csnState.step === 1){
+    container.innerHTML = `
+      <p class="muted" style="margin-bottom:6px;">Step 2 of ${CSN_TOTAL_STEPS}</p>
+      <h3>What's the main problem right now?</h3>
+      <div class="csn-options">${CSN_PROBLEMS.map(p=>`<button class="csn-option" onclick="csnSelect('problem','${p.id}')">${p.label}</button>`).join('')}</div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:16px;" onclick="csnBack()">← Back</button>`;
+  } else if(csnState.step === 2){
+    container.innerHTML = `
+      <p class="muted" style="margin-bottom:6px;">Step 3 of ${CSN_TOTAL_STEPS}</p>
+      <h3>When is the most urgent deadline?</h3>
+      <div class="csn-options">${CSN_URGENCY.map(u=>`<button class="csn-option" onclick="csnSelect('urgency','${u.id}')">${u.label}</button>`).join('')}</div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:16px;" onclick="csnBack()">← Back</button>`;
+  } else if(csnState.step === 3){
+    container.innerHTML = `
+      <p class="muted" style="margin-bottom:6px;">Step 4 of ${CSN_TOTAL_STEPS}</p>
+      <h3>How confident are you with the material?</h3>
+      <div class="csn-options">${CSN_CONFIDENCE.map(c=>`<button class="csn-option" onclick="csnSelect('confidence','${c.id}')">${c.label}</button>`).join('')}</div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:16px;" onclick="csnBack()">← Back</button>`;
+  } else {
+    renderClassStressResult();
+  }
+}
+function csnSelect(field, value){
+  csnState[field] = value;
+  gaEvent('class_stress_select',{field, value});
+  csnState.step++;
+  renderClassStressStep();
+}
+function csnBack(){
+  if(csnState.step > 0) csnState.step--;
+  renderClassStressStep();
+}
+function csnReset(){
+  csnState = {step:0, subject:null, advanced:false, problem:null, urgency:null, confidence:null};
+  renderClassStressStep();
+}
+
+/* Transparent, rule-based recommendation — no AI, no scoring, first matching rule wins. */
+function computeClassStressPlan(state){
+  const subj = state.subject || 'other';
+  const urgent = state.urgency === 'today' || state.urgency === 'tomorrow';
+  const soon = urgent || state.urgency === '3days';
+  const far = state.urgency === 'week' || state.urgency === 'later';
+  let priority, doFirst, doNext, dontDo, relatedResourceId, showCrisisLink=false;
+
+  if(state.problem === 'anxious'){
+    priority = "Reduce the overwhelm before you try to fix anything else. A racing feeling makes it hard to think clearly about what to actually do.";
+    doFirst = 'Stop. Write down your actual tasks and their real deadlines — most overwhelm comes from an unclear list, not an impossible one.';
+    doNext = ['Identify the single nearest deadline.', 'Pick one 10–20 minute action you can start right now — not the whole plan, just one piece.'];
+    dontDo = ["Don't try to plan out every subject and every assignment at once.", "Don't wait until you feel calm to start — starting is often what helps you feel calmer."];
+    relatedResourceId = 'burnout-prevention';
+    showCrisisLink = true;
+  } else if(state.problem === 'test-soon' && urgent && state.confidence === 'mostly'){
+    priority = 'Practice retrieval and review your mistakes — you already know the material, so the highest-value use of your time is testing yourself, not rereading.';
+    doFirst = CSN_SUBJECT_PRACTICE[subj];
+    doNext = [CSN_SUBJECT_NEXT[subj], 'Get a full night of sleep before the test if at all possible — it matters more than one more hour of review.'];
+    dontDo = ["Don't reread every chapter or every set of notes.", "Don't try to relearn material you already understand."];
+    relatedResourceId = 'study-techniques';
+  } else if(state.problem === 'test-soon' && urgent && state.confidence === 'confused'){
+    priority = "Identify the most important concepts and get targeted help — don't try to relearn the entire unit tonight.";
+    doFirst = 'Look at the study guide, unit outline, or past quizzes and identify the 2–3 concepts that show up most. Focus only on those first.';
+    doNext = ['Ask your teacher, a classmate, or a tutor one specific question about the part you\u2019re stuck on.', CSN_SUBJECT_PRACTICE[subj]];
+    dontDo = ["Don't try to learn everything — with this little time, partial understanding of the most important concepts beats a rushed pass over everything.", "Don't spend time re-copying notes."];
+    relatedResourceId = 'sat-test-anxiety';
+  } else if(state.problem === 'too-much' || state.problem === 'behind'){
+    priority = 'List out every assignment by deadline, then complete the highest-impact urgent task first — not the easiest one, and not everything at once.';
+    doFirst = 'Open your assignment list (or gradebook/LMS) and write down every deadline — due date, not just subject.';
+    doNext = ['Complete the assignment due first, even if it\u2019s not your favorite subject.', 'Cross off or reschedule anything that genuinely isn\u2019t urgent this week.'];
+    dontDo = ["Don't try to do everything at once.", "Don't spend an hour making a perfect schedule before starting the actual work."];
+    relatedResourceId = 'time-management';
+  } else if(far && state.confidence === 'confused'){
+    priority = 'Identify the first knowledge gap and schedule short practice sessions — you have time to build understanding step by step instead of cramming later.';
+    doFirst = 'Identify the exact concept you don\u2019t understand — write down the specific point where you get lost, not just "I don\u2019t get this unit."';
+    doNext = ['Ask your teacher one specific question about that concept.', 'Schedule two or three short (20–30 minute) practice sessions across the next week instead of one long one.'];
+    dontDo = ["Don't try to relearn the entire unit in one sitting.", "Don't wait until the week before the deadline to start."];
+    relatedResourceId = 'study-techniques';
+  } else if(state.problem === 'procrastinating'){
+    priority = 'Reduce your workload into one small, manageable first step — the goal right now is starting, not finishing.';
+    doFirst = 'Pick the smallest possible first step (open the document, do problem #1) and commit to just 2 minutes.';
+    doNext = ['Once you\u2019ve started, set a short timer (10–25 minutes) and work until it goes off.', 'Give yourself something to look forward to right after, as a real reward.'];
+    dontDo = ["Don't spend time building the perfect study schedule instead of starting.", "Don't wait to feel motivated first — starting usually comes before motivation, not after."];
+    relatedResourceId = 'motivation-procrastination';
+  } else if(state.problem === 'dont-understand'){
+    priority = 'Identify the exact concept you don\u2019t understand before trying to do anything else — vague confusion is hard to fix, a specific gap isn\u2019t.';
+    doFirst = 'Write down the specific point where you get lost — not "I don\u2019t get this chapter," but the exact step or idea.';
+    doNext = [CSN_SUBJECT_PRACTICE[subj], 'Ask your teacher one specific question about that exact point.'];
+    dontDo = ["Don't reread the whole chapter hoping it\u2019ll click.", "Don't move on to new material before addressing the gap."];
+    relatedResourceId = 'study-techniques';
+  } else if(state.problem === 'worried-grade'){
+    priority = 'Figure out exactly what\u2019s affecting your grade — missing work, a specific test, or ongoing understanding — before making a plan, since each needs a different fix.';
+    doFirst = 'Check your gradebook and identify whether the issue is missing assignments, test/quiz scores, or both.';
+    doNext = ['If it\u2019s missing work: list what\u2019s missing and its deadline or late-policy cutoff.', 'If it\u2019s test scores: try the retrieval-practice tip above for ' + (CSN_SUBJECTS.find(s=>s.id===subj)?.label || 'this subject') + '.'];
+    dontDo = ["Don't panic-study everything the night before the next test.", "Don't avoid checking the actual numbers — it's usually less bad than it feels."];
+    relatedResourceId = 'study-techniques';
+  } else {
+    // Fallback for any remaining combination
+    priority = soon
+      ? 'Focus on your nearest deadline first, and keep your plan for everything else simple.'
+      : 'Build a simple plan: figure out what\u2019s actually due, then work backward with a few short practice sessions.';
+    doFirst = soon ? 'Write down exactly what\u2019s due first and what it requires.' : CSN_SUBJECT_PRACTICE[subj];
+    doNext = [CSN_SUBJECT_NEXT[subj], 'Ask a specific question instead of a general one, whether that\u2019s to a teacher, classmate, or tutor.'];
+    dontDo = ["Don't wait until you feel fully ready to start — starting imperfectly beats waiting.", "Don't try to fix everything about this class in one sitting."];
+    relatedResourceId = 'time-management';
+  }
+
+  const subjectNote = CSN_SUBJECT_NOTE[subj] + (state.advanced ? ' Since this is an advanced or AP-level course: prioritize your weakest topics rather than splitting time evenly across everything, practice with authentic question formats (past FRQs, official practice questions), and lean on official course materials when you can.' : '');
+
+  return {priority, doFirst, doNext, dontDo, subjectNote, relatedResourceId, showCrisisLink};
+}
+
+function renderClassStressResult(){
+  const plan = computeClassStressPlan(csnState);
+  const container = document.getElementById('csnStepContainer');
+  container.innerHTML = `
+    <p class="muted" style="margin-bottom:10px;">Based on what you selected, here's what makes the most sense to prioritize.</p>
+    <div class="csn-result-block" style="background:var(--brand-light);">
+      <h4 style="color:var(--brand-dark);">Your priority right now</h4>
+      <p style="margin:0;font-size:1.05rem;font-weight:500;color:var(--ink);">${plan.priority}</p>
+    </div>
+    <div class="csn-result-block" style="background:var(--paper-alt);">
+      <h4 style="color:var(--ink-soft);">Do this first</h4>
+      <p style="margin:0;">${plan.doFirst}</p>
+    </div>
+    <div class="csn-result-block" style="background:var(--paper-alt);">
+      <h4 style="color:var(--ink-soft);">Do this next</h4>
+      <ul>${plan.doNext.map(t=>`<li>${t}</li>`).join('')}</ul>
+    </div>
+    <div class="csn-result-block" style="background:var(--rust-soft);">
+      <h4 style="color:var(--rust);">Don't do this right now</h4>
+      <ul>${plan.dontDo.map(t=>`<li>${t}</li>`).join('')}</ul>
+    </div>
+    <div class="csn-result-block" style="background:var(--card);border:1px solid var(--line);">
+      <h4 style="color:var(--ink-faint);">Subject note</h4>
+      <p style="margin:0;">${plan.subjectNote}</p>
+    </div>
+    ${plan.showCrisisLink ? `<div class="crisis-band" style="margin-bottom:14px;"><div class="ic">!</div><div><h3 style="font-size:1rem;">Feeling like more than one class is the problem?</h3><p style="margin-bottom:10px;">If this feeling is bigger than one assignment, or you're not sure you're okay, SCOPE's Crisis Resources page has real support options.</p><a href="#crisis" onclick="go('crisis')" class="btn btn-primary btn-sm">See crisis resources →</a></div></div>` : ''}
+    <p class="muted">This is a study-planning tool, not an assessment of you or your abilities — it doesn't know your exact situation, just what you told it.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;">
+      <button class="btn btn-ghost btn-sm" onclick="csnReset()">Start over</button>
+      <a href="#resources" onclick="go('resources');openResourceById('${plan.relatedResourceId}')" class="btn btn-ghost btn-sm">Related resource →</a>
+      <a href="#study-tools" onclick="go('study-tools')" class="btn btn-primary btn-sm">Explore related study tools →</a>
+    </div>`;
+  gaEvent('class_stress_result',{subject:csnState.subject, problem:csnState.problem, urgency:csnState.urgency, confidence:csnState.confidence});
+}
+
+/* ================= STUDENT TOOLKIT =================
+   Curated, verified, real external resources only. No affiliate or referral
+   links, no claimed partnerships. Every URL below was checked before launch. */
+const TOOLKIT = [
+  {cat:'AP & Advanced Coursework', items:[
+    {name:'College Board AP Students', desc:'Official course descriptions, exam dates, and free practice resources directly from the organization that writes the AP exams.', bestFor:'Any AP or advanced course', url:'https://apstudents.collegeboard.org/'},
+    {name:'Khan Academy', desc:'Free video lessons and practice problems across most high school subjects, from algebra to AP-level science and history.', bestFor:'Building understanding in a specific subject', url:'https://www.khanacademy.org/'},
+    {name:'Knowt', desc:'Free flashcards, study guides, and AP exam review materials, many created by other students and teachers.', bestFor:'Quick review and self-testing', url:'https://knowt.com/'},
+  ]},
+  {cat:'SAT & PSAT', items:[
+    {name:'Khan Academy Official SAT Prep', desc:'Official digital SAT prep built directly with the College Board, including practice by skill area.', bestFor:'SAT and PSAT preparation', url:'https://www.khanacademy.org/test-prep/digital-sat'},
+    {name:'Bluebook', desc:'The official College Board testing app used for real SAT and PSAT practice tests, in the same format as test day.', bestFor:'Getting comfortable with the actual digital test format', url:'https://bluebook.collegeboard.org/students'},
+    {name:'College Board SAT Suite', desc:'Official SAT and PSAT information: registration, test dates, and score details.', bestFor:'Logistics — signing up and understanding your scores', url:'https://satsuite.collegeboard.org/'},
+  ]},
+  {cat:'CLEP & College Credit', items:[
+    {name:'Modern States', desc:'Free, self-paced college-level courses that prepare you for CLEP exams, taught by college professors.', bestFor:'Earning real college credit before you graduate high school', url:'https://modernstates.org/'},
+    {name:'CLEP (College Board)', desc:'Official information on CLEP exams — what they test, where they\u2019re accepted, and how to register.', bestFor:'Understanding whether CLEP is worth it for you', url:'https://clep.collegeboard.org/'},
+  ]},
+  {cat:'Study & Learning', items:[
+    {name:'Quizlet', desc:'Create or search flashcard sets for almost any class or subject.', bestFor:'Quick vocabulary and fact review', url:'https://quizlet.com/'},
+    {name:'Crash Course', desc:'Free, well-produced educational video series covering everything from biology to world history.', bestFor:'Getting the big picture on a topic before diving into details', url:'https://thecrashcourse.com/'},
+  ]},
+  {cat:'Research & Writing', items:[
+    {name:'Google Scholar', desc:'Search academic articles and research papers across disciplines.', bestFor:'Research projects — not a replacement for your school or local librarian', url:'https://scholar.google.com/'},
+    {name:'Purdue OWL', desc:'Clear, official guidance on writing, grammar, and citation styles (MLA, APA, Chicago).', bestFor:'Formatting a paper or citing sources correctly', url:'https://owl.purdue.edu/'},
+  ]},
+  {cat:'College & Career Exploration', items:[
+    {name:'College Board BigFuture', desc:'Explore colleges, majors, and financial aid, all in one free official tool.', bestFor:'Starting to think about what\u2019s next after high school', url:'https://bigfuture.collegeboard.org/'},
+    {name:'O*NET OnLine', desc:'A free U.S. Department of Labor database of real career and occupation information.', bestFor:'Exploring what different careers actually involve day to day', url:'https://www.onetonline.org/'},
+  ]},
+];
+function renderToolkit(){
+  const el = document.getElementById('toolkitSections');
+  if(!el) return;
+  el.innerHTML = TOOLKIT.map(section => `
+    <div style="margin-bottom:40px;">
+      <h2 style="font-size:1.3rem;margin-bottom:16px;">${section.cat}</h2>
+      <div class="grid g-3">
+        ${section.items.map(item => `
+          <div class="toolkit-card">
+            <h3>${item.name}</h3>
+            <p style="font-size:.9rem;flex-grow:0;">${item.desc}</p>
+            <div class="best-for"><strong>Best for:</strong> ${item.bestFor}</div>
+            <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm" style="margin-top:auto;">Visit official website →</a>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+/* ================= INIT ================= */
+function init(){
+  renderProblemGrid();
+  renderHomeGrids();
+  renderContinueBand();
+  renderStreakBand();
+  renderCategoryPills();
+  renderResourceList();
+  renderApExams();
+  renderPlanner();
+  buildCheckin('burnout');
+  buildCheckin('stress');
+  renderGuideGrid();
+  renderFavList();
+  renderCrisisRelated();
+  renderQrCode();
+  renderContactCard();
+  renderPrivacyAnalyticsLine();
+  renderClassStressStep();
+  renderToolkit();
+  pomoRender();
+  const initial = location.hash.replace('#','') || 'home';
+  go(initial);
+}
+init();
+</script>
+</body>
+</html>

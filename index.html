@@ -167,6 +167,10 @@ nav.primary a:hover,nav.primary a.active{background:var(--brand-light);color:var
 .csn-result-block ul{margin:0;padding-left:18px;}
 .csn-result-block li{margin-bottom:6px;color:var(--ink-soft);}
 
+.ap-course-grid{grid-template-columns:repeat(3,1fr);}
+@media(max-width:800px){.ap-course-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:600px){.ap-course-grid{grid-template-columns:1fr;}}
+
 /* toolkit */
 .toolkit-card{padding:22px;border-radius:var(--radius-md);border:1px solid var(--line);background:var(--card);display:flex;flex-direction:column;height:100%;}
 .toolkit-card h3{margin-bottom:6px;font-size:1.05rem;}
@@ -354,7 +358,9 @@ input:focus,select:focus,textarea:focus{border-color:var(--brand);}
   <!-- detail view -->
   <div class="section container" id="resourceDetail" style="display:none;padding-top:0;">
     <button class="btn btn-ghost btn-sm" onclick="closeResourceDetail()">← Back to resources</button>
-    <div class="card-tool" style="margin-top:20px;max-width:760px;">
+    <p class="muted" style="margin:14px 0 6px;font-size:.8rem;">Jump to another resource:</p>
+    <div id="rdQuickSwitch" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+    <div class="card-tool" style="margin-top:16px;max-width:760px;">
       <div class="eyebrow" id="rdTag"><span class="dot"></span></div>
       <h2 id="rdTitle"></h2>
       <p id="rdBlurb" style="font-size:1.05rem;"></p>
@@ -582,6 +588,20 @@ input:focus,select:focus,textarea:focus{border-color:var(--brand);}
     <p class="muted" style="max-width:620px;">SCOPE isn't partnered or affiliated with any of these — we just think they're genuinely useful. These are external websites; SCOPE doesn't control their content and inclusion here isn't an endorsement of everything they offer. Links open in a new tab.</p>
   </div>
   <div class="section container" id="toolkitSections"></div>
+
+  <div class="section container" style="padding-top:0;">
+    <div class="divider"></div>
+    <div class="eyebrow"><span class="dot"></span> AP Course Guides</div>
+    <h2>AP Course Guides</h2>
+    <p style="max-width:620px;">Pick a course to see 2–4 curated third-party resources for it — not College Board's own materials (you already know about those), but other creators and sites students actually use to learn, review, and practice.</p>
+    <p class="muted" style="max-width:620px;">AP® is a trademark registered by the College Board, which is not affiliated with, and does not endorse, SCOPE.</p>
+    <div class="csn-options ap-course-grid" id="apCourseGrid" style="margin-top:20px;"></div>
+    <div id="apCourseDetail" style="display:none;margin-top:20px;">
+      <button class="btn btn-ghost btn-sm" onclick="closeApCourse()">← All AP courses</button>
+      <h3 id="apCourseTitle" style="margin-top:16px;"></h3>
+      <div class="grid g-3" id="apCourseResources" style="margin-top:14px;"></div>
+    </div>
+  </div>
 </section>
 
 <!-- ===================== COUNSELORS ===================== -->
@@ -714,7 +734,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--brand);}
 
     <div class="card-tool" style="margin-top:30px;max-width:680px;">
       <h3>What does SCOPE mean?</h3>
-      <p>SCOPE stands for <strong>Student Center for Occupation, Psychology, and Education</strong>. It brings together practical academic tools (Education), accessible psychology and stress-management resources (Psychology), and early exploration of careers and what comes after high school (Occupation) — all in one place built specifically for students.</p>
+      <p>SCOPE stands for <strong>Student Center of Psychology and Education</strong>. It brings together practical academic tools (Education) with accessible psychology and stress-management resources (Psychology) — all in one place built specifically for students.</p>
       <p style="margin-bottom:0;">SCOPE is an independent, student-focused educational project — not an official center, government program, university institution, or licensed healthcare provider. "Center" describes what it aims to be for students: one place to start, not a formal organization.</p>
     </div>
 
@@ -739,7 +759,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--brand);}
   <div class="section container">
     <div class="eyebrow"><span class="dot"></span> Contact</div>
     <h1 style="font-size:clamp(1.9rem,4vw,2.6rem);">Get in touch</h1>
-    <p style="max-width:560px;font-size:1.05rem;">SCOPE is currently a static website with no backend, so there's no contact form here that would actually go anywhere. Here's what actually works right now.</p>
+    <p style="max-width:560px;font-size:1.05rem;">SCOPE is a static website with no backend, so there's no contact form to submit here — but there is a real person on the other end of the email below.</p>
     <div class="grid g-2" style="margin-top:20px;align-items:flex-start;">
       <div class="card-tool" id="contactEmailCard"></div>
       <div class="card">
@@ -856,7 +876,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--brand);}
           <svg class="ring" viewBox="0 0 26 26"><circle cx="13" cy="13" r="10" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="3"/><circle cx="13" cy="13" r="10" fill="none" stroke="#E3A857" stroke-width="3" stroke-linecap="round" stroke-dasharray="63" stroke-dashoffset="18" transform="rotate(-90 13 13)"/></svg>
           SCOPE
         </div>
-        <p style="color:#9DBBB0;font-size:.72rem;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.04em;margin-bottom:12px;">Student Center for Occupation, Psychology, and Education</p>
+        <p style="color:#9DBBB0;font-size:.72rem;font-family:var(--font-mono);text-transform:uppercase;letter-spacing:.04em;margin-bottom:12px;">Student Center of Psychology and Education</p>
         <p style="color:#CBDDD6;font-size:.88rem;max-width:260px;">Free, evidence-informed study tools and academic well-being resources for middle and high school students. Independent student-focused project, currently in its first public release. No accounts, no ads.</p>
       </div>
       <div>
@@ -879,7 +899,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--brand);}
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 SCOPE — Student Center for Occupation, Psychology, and Education. Not a substitute for professional medical, psychological, or crisis care.</span>
+      <span>© 2026 SCOPE — Student Center of Psychology and Education. Not a substitute for professional medical, psychological, or crisis care.</span>
       <span>First public release — no accounts, no ads, no data leaves your device unless noted.</span>
     </div>
   </div>
@@ -897,8 +917,8 @@ input:focus,select:focus,textarea:focus{border-color:var(--brand);}
 */
 const CONFIG = {
   SITE_URL: '',        // e.g. 'https://scope.yourdomain.org' — leave blank until deployed
-  CONTACT_EMAIL: '',   // e.g. 'hello@yourdomain.org'
-  SCHOOL_EMAIL: ''     // e.g. 'schools@yourdomain.org'
+  CONTACT_EMAIL: 'sleonardo.scope@gmail.com',
+  SCHOOL_EMAIL: ''     // e.g. 'schools@yourdomain.org' — leave blank until a dedicated school-inquiries inbox exists
 };
 
 window.dataLayer = window.dataLayer || [];
@@ -1147,7 +1167,15 @@ function openResourceById(id, toolTab){
   </div>`;
   const favs = getFavorites();
   document.getElementById('rdFavBtn').innerHTML = favs.includes(id) ? '★ Saved to favorites' : '☆ Save to favorites';
-  const related = RESOURCES.filter(x=>x.id!==id && x.cat===r.cat).concat(RESOURCES.filter(x=>x.id!==id && x.cat!==r.cat)).slice(0,3);
+  // Quick-switch: every other resource is reachable in one click, from any resource's detail page.
+  document.getElementById('rdQuickSwitch').innerHTML = RESOURCES.filter(x=>x.id!==id).map(x=>
+    `<button class="pill" onclick="openResourceById('${x.id}')">${x.title}</button>`).join('');
+  // Related resources: prefer same-category matches, then fill from the rest in a rotating (not fixed) order.
+  const sameCat = RESOURCES.filter(x=>x.id!==id && x.cat===r.cat);
+  const otherCat = RESOURCES.filter(x=>x.id!==id && x.cat!==r.cat);
+  const startIdx = RESOURCES.findIndex(x=>x.id===id);
+  const rotatedOther = otherCat.slice(startIdx % otherCat.length).concat(otherCat.slice(0, startIdx % otherCat.length));
+  const related = sameCat.concat(rotatedOther).slice(0,3);
   document.getElementById('rdRelated').innerHTML = related.map(x=>`
     <button class="cat-card" onclick="openResourceById('${x.id}')"><span class="tag">${x.cat}</span><h3 style="font-size:1rem;">${x.title}</h3></button>`).join('');
   document.getElementById('feedbackThanks').style.display='none';
@@ -1475,9 +1503,10 @@ function renderContactCard(){
   const el = document.getElementById('contactEmailCard');
   if(!el) return;
   if(CONFIG.CONTACT_EMAIL){
-    el.innerHTML = `<h3>Email us</h3><p><a href="mailto:${CONFIG.CONTACT_EMAIL}">${CONFIG.CONTACT_EMAIL}</a></p>
-      <h3 style="margin-top:20px;">School partnerships</h3>
-      <p>${CONFIG.SCHOOL_EMAIL ? `<a href="mailto:${CONFIG.SCHOOL_EMAIL}">${CONFIG.SCHOOL_EMAIL}</a>` : 'Contact email not yet set up.'}</p>`;
+    el.innerHTML = `<h3>Email SCOPE</h3>
+      <p>SCOPE is built and run by <strong>Leonardo Silva</strong>. Reach out with questions, feedback, resource suggestions, or interest in bringing SCOPE to a school.</p>
+      <p><a href="mailto:${CONFIG.CONTACT_EMAIL}">${CONFIG.CONTACT_EMAIL}</a></p>
+      ${CONFIG.SCHOOL_EMAIL ? `<h3 style="margin-top:20px;">School partnerships</h3><p><a href="mailto:${CONFIG.SCHOOL_EMAIL}">${CONFIG.SCHOOL_EMAIL}</a></p>` : ''}`;
   } else {
     el.innerHTML = `<h3>Email — not yet configured</h3>
       <p class="muted">SCOPE doesn't have a live contact address wired up yet. Before launch, add a real email to <code>CONFIG.CONTACT_EMAIL</code> at the top of the site's code.</p>`;
@@ -1786,6 +1815,114 @@ function renderToolkit(){
     </div>`).join('');
 }
 
+/* ================= AP COURSE GUIDES =================
+   Curated third-party resources per AP course — deliberately excludes
+   College Board itself (students already know about apstudents.collegeboard.org).
+   Every URL below was individually verified before launch; none are invented.
+   Reused across courses where a creator legitimately covers multiple subjects
+   (e.g. Heimler's History covers APUSH, World, Human Geo, and Gov). */
+const AP_COURSES = [
+  {id:'calc', label:'AP Calculus AB/BC', items:[
+    {name:'The Organic Chemistry Tutor', desc:'Step-by-step video walkthroughs of calculus problems, from limits to integrals.', bestFor:'Working through a specific problem type until it clicks', url:'https://www.youtube.com/@TheOrganicChemistryTutor'},
+    {name:'Professor Leonard', desc:'Full-length, patient lecture-style videos that build understanding from the ground up.', bestFor:'Relearning a concept you missed in class', url:'https://www.youtube.com/@ProfessorLeonard'},
+    {name:'Flipped Math (The Algebros)', desc:'Free notes, practice problems, and videos organized unit-by-unit for Calc AB/BC.', bestFor:'Structured, unit-by-unit review', url:'https://www.flippedmath.com/'},
+  ]},
+  {id:'psych', label:'AP Psychology', items:[
+    {name:'Mr. Sinn', desc:'Unit-by-unit AP Psychology review videos from a high school social studies teacher.', bestFor:'Fast review before a unit test', url:'https://www.youtube.com/@MrSinn'},
+    {name:'Crash Course Psychology', desc:'Fast-paced, engaging overviews of major psychology topics and classic experiments.', bestFor:'Getting the big picture on a topic', url:'https://www.youtube.com/@crashcourse'},
+    {name:'Khan Academy Psychology', desc:'Structured lessons and practice questions aligned to the AP Psychology course.', bestFor:'Practice questions with explanations', url:'https://www.khanacademy.org/science/ap-college-psychology'},
+  ]},
+  {id:'bio', label:'AP Biology', items:[
+    {name:'Bio Penguins', desc:'AP-aligned unit reviews built specifically around the AP Bio course framework.', bestFor:'Exam-season synthesis and unit review', url:'https://www.youtube.com/channel/UCj8OTSMYJYrRkinAqLq8TCQ'},
+    {name:'Bozeman Science', desc:'In-depth explanations of biological mechanisms and the AP science practices.', bestFor:'Understanding how and why a process works', url:'https://www.youtube.com/@bozemanscience'},
+    {name:'Khan Academy Biology', desc:'Structured lessons and practice questions aligned to the AP Biology course.', bestFor:'Practice questions with explanations', url:'https://www.khanacademy.org/science/ap-college-biology'},
+  ]},
+  {id:'lang', label:'AP English Language', items:[
+    {name:'Coach Hall Writes', desc:'Clear, concise videos on rhetorical analysis, argument, and synthesis essays.', bestFor:'Breaking down exactly what an FRQ is asking for', url:'https://coachhallwrites.com/'},
+    {name:'Garden of English', desc:'Tutorials from a veteran AP Lang/Lit teacher and College Board consultant on reading and writing skills.', bestFor:'Understanding rubrics and how essays are scored', url:'https://www.youtube.com/c/GardenofEnglish'},
+    {name:'Marco Learning', desc:'Free AP Lang study guides and essay-writing walkthroughs tied to the exam rubrics.', bestFor:'Printable study guides to review from', url:'https://marcolearning.com/students/ap-study-guides/'},
+  ]},
+  {id:'apush', label:'AP U.S. History', items:[
+    {name:'Heimler\u2019s History', desc:'Unit reviews built around the APUSH course framework and key terms.', bestFor:'Unit-by-unit review before a test', url:'https://www.youtube.com/@HeimlersHistory'},
+    {name:'Khan Academy U.S. History', desc:'Structured lessons and practice questions aligned to the APUSH course.', bestFor:'Practice questions with explanations', url:'https://www.khanacademy.org/humanities/ap-us-history'},
+    {name:'Jocz Productions', desc:'APUSH and U.S. History videos from a high school history teacher, with free study guides.', bestFor:'A second explanation when the first one didn\u2019t click', url:'https://www.youtube.com/user/JoczProductions'},
+  ]},
+  {id:'world', label:'AP World History', items:[
+    {name:'Heimler\u2019s History', desc:'Unit reviews built around the AP World course framework and key terms.', bestFor:'Unit-by-unit review before a test', url:'https://www.youtube.com/@HeimlersHistory'},
+    {name:'Khan Academy World History', desc:'Structured lessons and practice questions covering world history content.', bestFor:'Practice questions with explanations', url:'https://www.khanacademy.org/humanities/world-history'},
+    {name:'Freemanpedia', desc:'A full unit-by-unit reference site built specifically for AP World History: Modern.', bestFor:'A single reference site to work through the whole course', url:'https://www.freeman-pedia.com/'},
+  ]},
+  {id:'humangeo', label:'AP Human Geography', items:[
+    {name:'Mr. Sinn', desc:'Unit-by-unit AP Human Geography review videos.', bestFor:'Fast review before a unit test', url:'https://www.youtube.com/@MrSinn'},
+    {name:'Heimler\u2019s History', desc:'Unit reviews built around the AP Human Geography course framework.', bestFor:'A second explanation of a tricky concept', url:'https://www.youtube.com/@HeimlersHistory'},
+    {name:'Khan Academy Human Geography', desc:'Structured lessons and practice questions aligned to the AP Human Geography course.', bestFor:'Practice questions with explanations', url:'https://www.khanacademy.org/humanities/ap-human-geography'},
+  ]},
+  {id:'splang', label:'AP Spanish Language', items:[
+    {name:'Se\u00f1or Jordan', desc:'Grammar and conversational Spanish videos organized by year/level.', bestFor:'Building listening comprehension and grammar together', url:'https://senorjordan.com/'},
+    {name:'The Spanish Dude', desc:'English-explained breakdowns of Spanish grammar rules that commonly trip up learners.', bestFor:'Finally understanding a grammar rule that hasn\u2019t clicked', url:'https://www.youtube.com/channel/UCDZPuuSYxhJlKesTmnelNVw'},
+    {name:'Spanish Playground', desc:'Vocabulary and cultural resources organized by topic.', bestFor:'Vocabulary in context', url:'https://www.spanishplayground.net/'},
+  ]},
+  {id:'split', label:'AP Spanish Literature', items:[
+    {name:'Carina Spanish', desc:'Videos and a podcast analyzing texts from the official AP Spanish Literature reading list \u2014 themes, historical context, and literary devices, all in Spanish.', bestFor:'Literary analysis of the actual required texts', url:'https://www.youtube.com/channel/UCUmXcrSlFCHS5H6b_nl6yKg'},
+    {name:'SpanishDict', desc:'A Spanish-English dictionary and grammar reference.', bestFor:'Looking up unfamiliar vocabulary or idioms while reading', url:'https://www.spanishdict.com/'},
+  ]},
+  {id:'phys1', label:'AP Physics 1', items:[
+    {name:'Flipping Physics', desc:'Clear conceptual video explanations built around common AP Physics 1 topics.', bestFor:'Understanding the concept before the math', url:'https://www.youtube.com/@flippingphysics'},
+    {name:'Khan Academy Physics', desc:'Structured lessons and practice questions aligned to the AP Physics 1 course.', bestFor:'Practice questions with explanations', url:'https://www.khanacademy.org/science/ap-physics-1'},
+    {name:'The Organic Chemistry Tutor \u2014 Physics', desc:'Step-by-step walkthroughs of physics problem sets.', bestFor:'Working through a specific problem type', url:'https://www.youtube.com/@TheOrganicChemistryTutor'},
+  ]},
+  {id:'physc', label:'AP Physics C: Mechanics', items:[
+    {name:'Flipping Physics', desc:'Clear conceptual explanations, including calculus-based mechanics topics.', bestFor:'Understanding the concept before the math', url:'https://www.youtube.com/@flippingphysics'},
+    {name:'The Organic Chemistry Tutor \u2014 Physics', desc:'Step-by-step walkthroughs of mechanics problem sets, including calculus-based approaches.', bestFor:'Working through a specific problem type', url:'https://www.youtube.com/@TheOrganicChemistryTutor'},
+    {name:'Michel van Biezen', desc:'A massive, methodically organized library of physics (and calculus) problem walkthroughs.', bestFor:'Finding a video on almost any specific mechanics topic', url:'https://www.youtube.com/@michelvanbiezen'},
+  ]},
+  {id:'gov', label:'AP U.S. Government', items:[
+    {name:'Heimler\u2019s History', desc:'Unit reviews built around the AP U.S. Government course framework.', bestFor:'Unit-by-unit review before a test', url:'https://www.youtube.com/@HeimlersHistory'},
+    {name:'Khan Academy U.S. Government and Civics', desc:'Structured lessons and practice questions aligned to the course.', bestFor:'Practice questions with explanations', url:'https://www.khanacademy.org/humanities/us-government-and-civics'},
+    {name:'Crash Course Government and Politics', desc:'Fast-paced overviews of how U.S. government actually works.', bestFor:'Getting the big picture before the details', url:'https://www.youtube.com/@crashcourse'},
+  ]},
+  {id:'lit', label:'AP English Literature', items:[
+    {name:'Garden of English', desc:'Tutorials from a veteran AP Lang/Lit teacher and College Board consultant on literary analysis.', bestFor:'Understanding rubrics and how essays are scored', url:'https://www.youtube.com/c/GardenofEnglish'},
+    {name:'Marco Learning', desc:'Free AP Lit study guides covering poetry and prose analysis, tied to the exam rubrics.', bestFor:'Printable study guides to review from', url:'https://marcolearning.com/students/ap-study-guides/'},
+    {name:'Coach Hall Writes', desc:'Concise videos on close reading and essay structure that carry over from AP Lang to AP Lit.', bestFor:'Essay structure and line-of-reasoning basics', url:'https://coachhallwrites.com/'},
+  ]},
+  {id:'stats', label:'AP Statistics', items:[
+    {name:'Stats Medic', desc:'AP Statistics lesson resources and review materials from two experienced AP Stats teachers.', bestFor:'Working through a specific unit\u2019s core ideas', url:'https://www.statsmedic.com/'},
+    {name:'Khan Academy Statistics', desc:'Structured lessons and practice questions aligned to the AP Statistics course.', bestFor:'Practice questions with explanations', url:'https://www.khanacademy.org/math/ap-statistics'},
+    {name:'AP Statistics & AP Precalculus (Michael Porinchak)', desc:'Video walkthroughs of AP Statistics topics and past exam questions.', bestFor:'Seeing a full problem solved step by step', url:'https://www.youtube.com/channel/UCGhrYNeDgs_D8wEI1FLbZ_A'},
+  ]},
+  {id:'apes', label:'AP Environmental Science', items:[
+    {name:'Bozeman Science', desc:'In-depth explanations of environmental systems and the AP science practices.', bestFor:'Understanding how a system or cycle works', url:'https://www.youtube.com/@bozemanscience'},
+    {name:'Khan Academy Environmental Science', desc:'Structured lessons and practice questions aligned to the AP Environmental Science course.', bestFor:'Practice questions with explanations', url:'https://www.khanacademy.org/science/ap-environmental-science'},
+    {name:'Crash Course Ecology', desc:'Fast-paced overviews of ecology and environmental science concepts.', bestFor:'Getting the big picture before the details', url:'https://www.youtube.com/@crashcourse'},
+  ]},
+];
+function renderApCourseGrid(){
+  const grid = document.getElementById('apCourseGrid');
+  if(!grid) return;
+  grid.innerHTML = AP_COURSES.map(c=>`<button class="csn-option" onclick="selectApCourse('${c.id}')">${c.label}</button>`).join('');
+}
+function selectApCourse(id){
+  const course = AP_COURSES.find(c=>c.id===id);
+  if(!course) return;
+  document.getElementById('apCourseGrid').style.display='none';
+  document.getElementById('apCourseDetail').style.display='block';
+  document.getElementById('apCourseTitle').textContent = course.label;
+  document.getElementById('apCourseResources').innerHTML = course.items.map(item=>`
+    <div class="toolkit-card">
+      <h3>${item.name}</h3>
+      <p style="font-size:.9rem;flex-grow:0;">${item.desc}</p>
+      <div class="best-for"><strong>Best for:</strong> ${item.bestFor}</div>
+      <a href="${item.url}" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-sm" style="margin-top:auto;">Visit official website →</a>
+    </div>`).join('');
+  window.scrollTo({top:document.getElementById('apCourseDetail').offsetTop - 80, behavior:'smooth'});
+  gaEvent('ap_course_view',{course:id});
+}
+function closeApCourse(){
+  document.getElementById('apCourseDetail').style.display='none';
+  document.getElementById('apCourseGrid').style.display='grid';
+}
+
 /* ================= INIT ================= */
 function init(){
   renderProblemGrid();
@@ -1806,6 +1943,7 @@ function init(){
   renderPrivacyAnalyticsLine();
   renderClassStressStep();
   renderToolkit();
+  renderApCourseGrid();
   pomoRender();
   const initial = location.hash.replace('#','') || 'home';
   go(initial);
